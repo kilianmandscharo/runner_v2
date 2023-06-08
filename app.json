@@ -5,6 +5,14 @@
       "bundler": "metro"
     },
     "name": "runner_v2",
-    "slug": "runner_v2"
+    "slug": "runner_v2",
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "isAndroidBackgroundLocationEnabled": "true"
+        }
+      ]
+    ]
   }
 }
