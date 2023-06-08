@@ -4,15 +4,10 @@ import { Run } from "../types/types";
 const DB_NAME = "data.db";
 
 export class DatabaseConnector {
-  private db: SQLite.Database | null = null;
+  private db: SQLite.Database = SQLite.openDatabase(DB_NAME);
 
   constructor() {
-    this.open();
     this.init();
-  }
-
-  private open() {
-    this.db = SQLite.openDatabase(DB_NAME);
   }
 
   private init() {
@@ -27,25 +22,28 @@ export class DatabaseConnector {
     );
   `;
 
-    return new Promise<void>((resolve, reject) => {
-      this.db?.transaction(
+    this.executeTransaction(createTableQuery).catch((err) => {
+      throw err;
+    });
+  }
+
+  private executeTransaction(query: string, params: any[] = []): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.db.transaction(
         (tx) => {
           tx.executeSql(
-            createTableQuery,
-            [],
-            () => {
-              console.log("Table created successfully");
-              resolve();
+            query,
+            params,
+            (_, resultSet) => {
+              resolve(resultSet);
             },
             (err) => {
-              console.log("Error while creating the table:", err);
               reject(err);
               return false;
             }
           );
         },
         (err) => {
-          console.log(err);
           reject(err);
         }
       );
@@ -61,30 +59,19 @@ export class DatabaseConnector {
     const { start, end, time, distance, path } = run;
     const pathString = JSON.stringify(path);
 
-    return new Promise<number | undefined>((resolve, reject) => {
-      this.db?.transaction(
-        (tx) => {
-          tx.executeSql(
-            saveRunQuery,
-            [start, end, time, distance, pathString],
-            (_, resultSet) => {
-              console.log("Run saved successfully");
-              const insertedId = resultSet.insertId;
-              resolve(insertedId);
-            },
-            (err) => {
-              console.log("Error saving run:", err);
-              reject(err);
-              return false;
-            }
-          );
-        },
-        (err) => {
-          console.log("Transaction error:", err);
-          reject(err);
-        }
-      );
-    });
+    try {
+      const result = await this.executeTransaction(saveRunQuery, [
+        start,
+        end,
+        time,
+        distance,
+        pathString,
+      ]);
+      const insertedId = result.insertId;
+      return insertedId;
+    } catch (err) {
+      throw err;
+    }
   }
 
   async deleteRun(runId: number): Promise<number> {
@@ -93,30 +80,13 @@ export class DatabaseConnector {
     WHERE id = ?;
   `;
 
-    return new Promise<number>((resolve, reject) => {
-      this.db?.transaction(
-        (tx) => {
-          tx.executeSql(
-            deleteRunQuery,
-            [runId],
-            (_, resultSet) => {
-              console.log("Run deleted successfully");
-              const rowsAffected = resultSet.rowsAffected;
-              resolve(rowsAffected);
-            },
-            (err) => {
-              console.log("Error deleting run:", err);
-              reject(err);
-              return false;
-            }
-          );
-        },
-        (err) => {
-          console.log("Transaction error:", err);
-          reject(err);
-        }
-      );
-    });
+    try {
+      const result = await this.executeTransaction(deleteRunQuery, [runId]);
+      const rowsAffected = result.rowsAffected;
+      return rowsAffected;
+    } catch (err) {
+      throw err;
+    }
   }
 
   async getAllRuns(): Promise<Run[]> {
@@ -124,44 +94,28 @@ export class DatabaseConnector {
     SELECT * FROM run;
   `;
 
-    return new Promise<Run[]>((resolve, reject) => {
-      this.db?.transaction(
-        (tx) => {
-          tx.executeSql(
-            getAllRunsQuery,
-            [],
-            (_, resultSet) => {
-              const { rows } = resultSet;
-              const runs: Run[] = [];
+    try {
+      const result = await this.executeTransaction(getAllRunsQuery);
+      const { rows } = result;
+      const runs: Run[] = [];
 
-              for (let i = 0; i < rows.length; i++) {
-                const { id, start, end, time, distance, path } = rows.item(i);
-                const parsedPath = JSON.parse(path);
-                const run: Run = {
-                  id,
-                  start,
-                  end,
-                  time,
-                  distance,
-                  path: parsedPath,
-                };
-                runs.push(run);
-              }
+      for (let i = 0; i < rows.length; i++) {
+        const { id, start, end, time, distance, path } = rows.item(i);
+        const parsedPath = JSON.parse(path);
+        const run: Run = {
+          id,
+          start,
+          end,
+          time,
+          distance,
+          path: parsedPath,
+        };
+        runs.push(run);
+      }
 
-              resolve(runs);
-            },
-            (err) => {
-              console.log("Error retrieving runs:", err);
-              reject(err);
-              return false;
-            }
-          );
-        },
-        (err) => {
-          console.log("Transaction error:", err);
-          reject(err);
-        }
-      );
-    });
+      return runs;
+    } catch (err) {
+      throw err;
+    }
   }
 }
