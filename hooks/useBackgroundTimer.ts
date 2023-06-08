@@ -3,9 +3,9 @@ import dayjs, { Dayjs } from "dayjs";
 import { AppState, AppStateStatus } from "react-native";
 
 export default function useBackgroundTimer(): {
-  start: () => void;
-  stop: () => void;
-  reset: () => void;
+  startTimer: () => void;
+  stopTimer: () => void;
+  resetTimer: () => void;
   seconds: number;
 } {
   const [seconds, setSeconds] = useState(0);
@@ -63,5 +63,5 @@ export default function useBackgroundTimer(): {
     setSeconds(0);
   };
 
-  return { start, stop, reset, seconds };
+  return { startTimer: start, stopTimer: stop, resetTimer: reset, seconds };
 }

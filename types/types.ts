@@ -7,20 +7,9 @@ export interface Run {
   path: Location[];
 }
 
-export function newRun(): Run {
-  return {
-    id: -1,
-    start: "",
-    end: "",
-    time: 0,
-    distance: 0,
-    path: [],
-  };
-}
-
 export interface Location {
   timestamp: number;
-  long: number;
+  lon: number;
   lat: number;
   speed: number;
   altitude: number;

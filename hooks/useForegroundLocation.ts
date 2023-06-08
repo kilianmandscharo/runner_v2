@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { Location as LocationItem } from "../types/types";
 
-export default function useForegroundLocation() {
-  const [location, setLocation] = useState<null | LocationItem>(null);
+export default function useForegroundLocation(
+  callback: (location: LocationItem) => void
+) {
   const [permissionError, setPermissionError] = useState<null | string>(null);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function useForegroundLocation() {
           distanceInterval: 0,
         },
         (newLocation) => {
-          setLocation({
+          callback({
             timestamp: newLocation.timestamp,
             long: newLocation.coords.longitude,
             lat: newLocation.coords.latitude,
@@ -41,5 +42,5 @@ export default function useForegroundLocation() {
     return null;
   };
 
-  return { location, permissionError };
+  return permissionError;
 }

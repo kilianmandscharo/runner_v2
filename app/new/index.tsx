@@ -1,43 +1,52 @@
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, Text, View, StyleSheet } from "react-native";
 import { DatabaseConnector } from "../../database/database";
 import useBackgroundTimer from "../../hooks/useBackgroundTimer";
-import useForegroundLocation from "../../hooks/useForegroundLocation";
-import { newRun, Run } from "../../types/types";
+import usePath from "../../hooks/usePath";
+import { Run } from "../../types/types";
 
 const dbConnector = new DatabaseConnector();
 
 export default function NewRun() {
-  const { start, stop, reset, seconds } = useBackgroundTimer();
-  const { location, permissionError } = useForegroundLocation();
-
   const [finished, setFinished] = useState<boolean>(false);
   const [running, setRunning] = useState<boolean>(false);
-  const [run, setRun] = useState<Run | null>(null);
+  const startTime = useRef<null | string>(null);
+
+  const { startTimer, stopTimer, resetTimer, seconds } = useBackgroundTimer();
+
+  const { startPath, stopPath, resetPath, error, path, distance } = usePath();
 
   const startRun = () => {
-    const run = newRun();
-    run.start = dayjs().toISOString();
-    setRun(run);
+    startTime.current = dayjs().toISOString();
+    startTimer();
+    startPath();
     setRunning(true);
   };
 
   const stopRun = () => {
-    stop();
+    stopTimer();
+    stopPath();
     setRunning(false);
   };
 
   const endRun = async () => {
+    stopTimer();
+    stopPath();
     setRunning(false);
     setFinished(true);
-    if (!run) {
-      return;
-    }
-    const finishedRun: Run = { ...run };
-    finishedRun.end = dayjs().toISOString();
+
+    const run: Run = {
+      id: -1,
+      start: startTime.current ?? dayjs().toISOString(),
+      end: dayjs().toISOString(),
+      time: seconds,
+      distance: distance,
+      path: path,
+    };
+
     try {
-      await dbConnector.saveRun(finishedRun);
+      await dbConnector.saveRun(run);
     } catch (e) {
       if (e instanceof Error) {
         throw e;
@@ -45,12 +54,24 @@ export default function NewRun() {
     }
   };
 
+  const resetRun = () => {
+    startTime.current = null;
+    resetTimer();
+    resetPath();
+  };
+
   return (
     <View style={styles.container}>
-      <Text>{seconds}</Text>
-      <Button onPress={start} title="Start" />
-      <Button onPress={stop} title="Stop" />
-      <Button onPress={reset} title="Reset" />
+      {error && <Text>No location service permission</Text>}
+      {!error && (
+        <>
+          <Text>{seconds}</Text>
+          <Button onPress={startRun} title="Start" />
+          <Button onPress={stopRun} title="Stop" />
+          <Button onPress={endRun} title="End" />
+          <Button onPress={resetRun} title="Reset" />
+        </>
+      )}
     </View>
   );
 }
