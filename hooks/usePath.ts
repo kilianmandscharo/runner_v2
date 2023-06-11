@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Location } from "../types/types";
 import { calculatePointDistance } from "../utils/utils";
 import useForegroundLocation from "./useForegroundLocation";
@@ -9,26 +9,31 @@ export default function usePath(): {
   resetPath: () => void;
   path: Location[];
   distance: number;
-  error: null | string;
+  permissionStatus: boolean;
 } {
   const [path, setPath] = useState<Location[]>([]);
   const [distance, setDistance] = useState<number>(0);
   const [running, setRunning] = useState<boolean>(false);
 
-  const handleNewLocation = (location: Location) => {
-    if (!running) return;
+  const handleNewLocation = useCallback(
+    (location: Location) => {
+      if (path.length > 0) {
+        const distanceToLastPathPoint = calculatePointDistance(
+          path[path.length - 1],
+          location
+        );
+        setDistance((prev) => prev + distanceToLastPathPoint);
+      }
 
-    if (path.length > 0) {
-      const distanceToLastPathPoint = calculatePointDistance(
-        path[path.length - 1],
-        location
-      );
-      setDistance((prev) => prev + distanceToLastPathPoint);
-    }
-    setPath((prev) => [...prev, location]);
-  };
+      setPath((prev) => [...prev, location]);
+    },
+    [path]
+  );
 
-  const error = useForegroundLocation(handleNewLocation);
+  const { permissionStatus } = useForegroundLocation(
+    handleNewLocation,
+    running
+  );
 
   const start = () => {
     setRunning(true);
@@ -50,6 +55,6 @@ export default function usePath(): {
     resetPath: reset,
     path,
     distance,
-    error,
+    permissionStatus,
   };
 }
