@@ -83,10 +83,11 @@ export default function Lock({ onUnlock, onLock, disabled, toggle }: Props) {
 
   return (
     <Pressable
-      style={styles.container}
+      style={{ ...styles.container, opacity: disabled ? 0.5 : 1 }}
       onPress={onPress}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
+      disabled={disabled}
     >
       <LockCircle animatedFillValue={animatedFillValue} />
       {unlocked ? (

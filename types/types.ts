@@ -14,3 +14,9 @@ export interface Location {
   speed: number;
   altitude: number;
 }
+
+export interface Time {
+  hours: number;
+  minutes: number;
+  seconds: number;
+}

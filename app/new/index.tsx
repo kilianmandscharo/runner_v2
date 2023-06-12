@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { useRef, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import Button from "../../components/Button";
+import Clock from "../../components/Clock";
 import Lock from "../../components/Lock/Lock";
 import { DatabaseConnector } from "../../database/database";
 import useBackgroundTimer from "../../hooks/useBackgroundTimer";
@@ -72,6 +73,7 @@ export default function NewRun() {
       {!permissionStatus && <Text>No location service permission</Text>}
       {permissionStatus && (
         <>
+          <Clock timeInSeconds={seconds} />
           <Text style={styles.text}>Zeit: {seconds}</Text>
           <Text style={styles.text}>Distanz: {distance}</Text>
           <Text style={styles.text}>Pfad: {path.length}</Text>
