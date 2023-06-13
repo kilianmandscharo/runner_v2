@@ -91,9 +91,9 @@ export default function Lock({ onUnlock, onLock, disabled, toggle }: Props) {
     >
       <LockCircle animatedFillValue={animatedFillValue} />
       {unlocked ? (
-        <FontAwesome name="unlock-alt" size={48} color="black" />
+        <FontAwesome name="unlock-alt" size={48} color="white" />
       ) : (
-        <FontAwesome name="lock" size={48} color="black" />
+        <FontAwesome name="lock" size={48} color="white" />
       )}
     </Pressable>
   );

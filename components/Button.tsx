@@ -8,6 +8,7 @@ interface Props {
   text?: string;
   icon?: JSX.Element;
   bg?: string;
+  rounded?: boolean;
 }
 
 export default function Button({
@@ -19,6 +20,7 @@ export default function Button({
   text,
   icon,
   bg,
+  rounded,
 }: Props) {
   width = width ?? 300;
   height = height ?? 70;
@@ -34,6 +36,7 @@ export default function Button({
           height: height,
           backgroundColor: bg,
           opacity: disabled ? 0.4 : 1,
+          borderRadius: rounded ? width / 2 : 4,
         }}
       >
         {text && <Text style={{ fontSize, color: "white" }}>{text}</Text>}
@@ -46,7 +49,6 @@ export default function Button({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "teal",
-    borderRadius: 4,
     justifyContent: "center",
     alignItems: "center",
   },

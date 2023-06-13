@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, StatusBar } from "react-native";
 import Button from "../../components/Button";
 import Clock from "../../components/Clock";
 import Lock from "../../components/Lock/Lock";
@@ -15,6 +15,7 @@ export default function NewRun() {
   const [started, setStarted] = useState<boolean>(false);
   const [finished, setFinished] = useState<boolean>(false);
   const [running, setRunning] = useState<boolean>(false);
+  const [locked, setLocked] = useState<boolean>(true);
   const startTime = useRef<null | string>(null);
 
   const { startTimer, stopTimer, resetTimer, seconds } = useBackgroundTimer();
@@ -66,6 +67,7 @@ export default function NewRun() {
     resetPath();
     setFinished(false);
     setStarted(false);
+    setLocked(true);
   };
 
   return (
@@ -73,30 +75,44 @@ export default function NewRun() {
       {!permissionStatus && <Text>No location service permission</Text>}
       {permissionStatus && (
         <>
-          <Clock timeInSeconds={seconds} />
-          <Text style={styles.text}>Zeit: {seconds}</Text>
-          <Text style={styles.text}>Distanz: {distance}</Text>
-          <Text style={styles.text}>Pfad: {path.length}</Text>
-          <Button
-            onPress={startRun}
-            text="Start"
-            disabled={running || finished}
-          />
-          <Button
-            onPress={stopRun}
-            text="Stop"
-            disabled={!running || finished}
-          />
-          <Button onPress={endRun} text="End" disabled={finished || !started} />
-          <Button onPress={resetRun} text="Reset" disabled={!finished} />
+          <Clock timeInSeconds={seconds} onStart={startRun} started={started} />
+          <View style={styles.distanceContainer}>
+            <Text style={styles.distanceText}>
+              Distanz: {Math.floor(distance) / 1000} km
+            </Text>
+          </View>
         </>
       )}
-      <Lock
-        disabled={!started}
-        toggle={finished}
-        onLock={() => null}
-        onUnlock={() => null}
-      />
+      <View style={styles.controls}>
+        <Lock
+          disabled={!started || finished}
+          toggle={finished}
+          onLock={() => setLocked(true)}
+          onUnlock={() => setLocked(false)}
+        />
+        {started && !running ? (
+          <Button
+            onPress={startRun}
+            text="Weiter"
+            disabled={locked || finished}
+          />
+        ) : (
+          <Button
+            onPress={stopRun}
+            text="Stopp"
+            disabled={!running || finished || locked}
+          />
+        )}
+        {!finished ? (
+          <Button
+            onPress={endRun}
+            text="Beenden"
+            disabled={finished || !started || locked}
+          />
+        ) : (
+          <Button onPress={resetRun} text="Zurücksetzen" />
+        )}
+      </View>
     </View>
   );
 }
@@ -104,12 +120,27 @@ export default function NewRun() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     gap: 16,
-    marginTop: 100,
+    backgroundColor: "black",
+    marginTop: StatusBar.currentHeight,
   },
-  text: {
-    fontSize: 24,
+  controls: {
+    flex: 1,
+    gap: 16,
+    alignItems: "center",
+  },
+  distanceContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "teal",
+    borderWidth: 2,
+    padding: 16,
+    width: 300,
+    borderRadius: 8,
+  },
+  distanceText: {
+    fontSize: 40,
+    color: "white",
   },
 });
