@@ -5,6 +5,8 @@ import Button from "../../components/Button";
 import Clock from "../../components/Clock";
 import Lock from "../../components/Lock/Lock";
 import { DatabaseConnector } from "../../database/database";
+import useBackgroundLocation from "../../hooks/useBackgroundLocation";
+import useBackgroundPath from "../../hooks/useBackgroundPath";
 import useBackgroundTimer from "../../hooks/useBackgroundTimer";
 import usePath from "../../hooks/usePath";
 import { Run } from "../../types/types";
@@ -22,6 +24,10 @@ export default function NewRun() {
 
   const { startPath, stopPath, resetPath, permissionStatus, path, distance } =
     usePath();
+
+  const bgDistance = useBackgroundPath();
+
+  console.log(bgDistance);
 
   const startRun = () => {
     startTime.current = dayjs().toISOString();
