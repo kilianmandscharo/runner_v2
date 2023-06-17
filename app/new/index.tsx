@@ -1,87 +1,32 @@
-import dayjs from "dayjs";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Text, View, StyleSheet, StatusBar } from "react-native";
 import Button from "../../components/Button";
 import Clock from "../../components/Clock";
 import Lock from "../../components/Lock/Lock";
-import { DatabaseConnector } from "../../database/database";
-import useBackgroundLocation from "../../hooks/useBackgroundLocation";
-import useBackgroundPath from "../../hooks/useBackgroundPath";
-import useBackgroundTimer from "../../hooks/useBackgroundTimer";
-import usePath from "../../hooks/usePath";
-import { Run } from "../../types/types";
-
-const dbConnector = new DatabaseConnector();
+import useNewRun from "../../hooks/useNewRun";
 
 export default function NewRun() {
-  const [started, setStarted] = useState<boolean>(false);
-  const [finished, setFinished] = useState<boolean>(false);
-  const [running, setRunning] = useState<boolean>(false);
   const [locked, setLocked] = useState<boolean>(true);
-  const startTime = useRef<null | string>(null);
 
-  const { startTimer, stopTimer, resetTimer, seconds } = useBackgroundTimer();
-
-  const { startPath, stopPath, resetPath, permissionStatus, path, distance } =
-    usePath();
-
-  const bgDistance = useBackgroundPath();
-
-  console.log(bgDistance);
-
-  const startRun = () => {
-    startTime.current = dayjs().toISOString();
-    startTimer();
-    startPath();
-    setRunning(true);
-    setStarted(true);
-  };
-
-  const stopRun = () => {
-    stopTimer();
-    stopPath();
-    setRunning(false);
-  };
-
-  const endRun = async () => {
-    stopTimer();
-    stopPath();
-    setRunning(false);
-    setFinished(true);
-
-    const run: Run = {
-      id: -1,
-      start: startTime.current ?? dayjs().toISOString(),
-      end: dayjs().toISOString(),
-      time: seconds,
-      distance: distance,
-      path: path,
-    };
-
-    try {
-      await dbConnector.saveRun(run);
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
-      }
-    }
-  };
-
-  const resetRun = () => {
-    startTime.current = null;
-    resetTimer();
-    resetPath();
-    setFinished(false);
-    setStarted(false);
-    setLocked(true);
-  };
+  const {
+    permissionGranted,
+    seconds,
+    distance,
+    started,
+    finished,
+    running,
+    start,
+    stop,
+    end,
+    reset,
+  } = useNewRun();
 
   return (
     <View style={styles.container}>
-      {!permissionStatus && <Text>No location service permission</Text>}
-      {permissionStatus && (
+      {!permissionGranted && <Text>No location service permission</Text>}
+      {permissionGranted && (
         <>
-          <Clock timeInSeconds={seconds} onStart={startRun} started={started} />
+          <Clock timeInSeconds={seconds} onStart={start} started={started} />
           <View style={styles.distanceContainer}>
             <Text style={styles.distanceText}>
               Distanz: {Math.floor(distance) / 1000} km
@@ -97,26 +42,22 @@ export default function NewRun() {
           onUnlock={() => setLocked(false)}
         />
         {started && !running ? (
-          <Button
-            onPress={startRun}
-            text="Weiter"
-            disabled={locked || finished}
-          />
+          <Button onPress={start} text="Weiter" disabled={locked || finished} />
         ) : (
           <Button
-            onPress={stopRun}
+            onPress={stop}
             text="Stopp"
             disabled={!running || finished || locked}
           />
         )}
         {!finished ? (
           <Button
-            onPress={endRun}
+            onPress={end}
             text="Beenden"
             disabled={finished || !started || locked}
           />
         ) : (
-          <Button onPress={resetRun} text="Zurücksetzen" />
+          <Button onPress={reset} text="Zurücksetzen" />
         )}
       </View>
     </View>

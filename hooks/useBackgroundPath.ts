@@ -1,17 +1,60 @@
 import { useEffect, useRef, useState } from "react";
 import { Location } from "../types/types";
 import * as Storage from "../storage/storage";
-import { calculatePointDistance } from "../utils/utils";
 import useBackgroundLocation from "./useBackgroundLocation";
 
-export default function useBackgroundPath() {
-  const path = useRef<Location[]>([]);
+export default function useBackgroundPath(): {
+  permissionGranted: boolean;
+  path: Location[];
+  distance: number;
+  startPath: () => Promise<void>;
+  stopPath: () => Promise<void>;
+  resetPath: () => Promise<void>;
+} {
   const [distance, setDistance] = useState<number>(0);
+  const path = useRef<Location[]>([]);
+  const intervalID = useRef<NodeJS.Timer | null>(null);
 
-  useBackgroundLocation();
+  const { permissionGranted, startLocation, stopLocation } =
+    useBackgroundLocation();
+
+  useEffect(() => {
+    Storage.getLocations().then(handleNewLocations);
+
+    return () => {
+      if (intervalID.current) {
+        clearInterval(intervalID.current);
+      }
+    };
+  }, []);
+
+  const startPath = async () => {
+    if (intervalID.current === null) {
+      intervalID.current = setInterval(() => {
+        Storage.getLocations().then(handleNewLocations);
+      }, 1000);
+    }
+    await startLocation();
+  };
+
+  const stopPath = async () => {
+    if (intervalID.current) {
+      clearInterval(intervalID.current);
+      intervalID.current = null;
+      await stopLocation();
+    }
+  };
+
+  const resetPath = async () => {
+    await stopLocation();
+    setDistance(0);
+    path.current = [];
+  };
 
   const handleNewLocations = (locations: Location[]) => {
     path.current = [...path.current, ...locations];
+    setDistance((prev) => prev + 1);
+    Storage.deleteLocations();
 
     // let newDistance = 0;
     // locations.forEach((location, i) => {
@@ -21,21 +64,14 @@ export default function useBackgroundPath() {
     // });
     //
     // setDistance((prev) => prev + newDistance);
-
-    Storage.deleteLocations();
   };
 
-  useEffect(() => {
-    Storage.getLocations().then(handleNewLocations);
-
-    const intervalID = setInterval(() => {
-      Storage.getLocations().then(handleNewLocations);
-    }, 1000);
-
-    return () => {
-      clearInterval(intervalID);
-    };
-  }, []);
-
-  return distance;
+  return {
+    permissionGranted,
+    path: path.current,
+    distance,
+    startPath,
+    stopPath,
+    resetPath,
+  };
 }
