@@ -1,4 +1,8 @@
-import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity } from "react-native";
+
+type ButtonVariant = "primary" | "secondary";
+type ButtonColor = "primary" | "danger";
+
 interface Props {
   onPress: (...args: any[]) => void;
   disabled?: boolean;
@@ -7,49 +11,45 @@ interface Props {
   fontSize?: number;
   text?: string;
   icon?: JSX.Element;
-  bg?: string;
   rounded?: boolean;
+  variant?: ButtonVariant;
+  bg?: ButtonColor;
 }
 
 export default function Button({
   onPress,
   disabled,
-  width,
-  height,
-  fontSize,
+  width = 300,
+  height = 70,
+  fontSize = 24,
   text,
   icon,
-  bg,
+  bg = "primary",
   rounded,
 }: Props) {
-  width = width ?? 300;
-  height = height ?? 70;
-  bg = bg ?? "teal";
-  fontSize = fontSize ?? 24;
+  const bgMap: Record<ButtonColor, string> = {
+    primary: "bg-teal-600",
+    danger: "bg-red-500",
+  };
 
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress} disabled={disabled}>
       <View
+        className={`${bgMap[bg]} justify-center items-center`}
         style={{
-          ...styles.container,
           width: width,
           height: height,
-          backgroundColor: bg,
           opacity: disabled ? 0.4 : 1,
           borderRadius: rounded ? width / 2 : 4,
         }}
       >
-        {text && <Text style={{ fontSize, color: "white" }}>{text}</Text>}
+        {text && (
+          <Text className="text-white" style={{ fontSize }}>
+            {text}
+          </Text>
+        )}
         {icon && icon}
       </View>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "teal",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Animated, Pressable, StyleSheet } from "react-native";
+import { Animated, Pressable } from "react-native";
 import { LOCK_CIRCLE_CIRCUMFERENCE } from "../../constants/constants";
 import LockCircle from "./LockCircle";
 import { FontAwesome } from "@expo/vector-icons";
@@ -83,7 +83,8 @@ export default function Lock({ onUnlock, onLock, disabled, toggle }: Props) {
 
   return (
     <Pressable
-      style={{ ...styles.container, opacity: disabled ? 0.5 : 1 }}
+      className="justify-center items-center w-[100] h-[100]"
+      style={{ opacity: disabled ? 0.5 : 1 }}
       onPress={onPress}
       onPressIn={onPressIn}
       onPressOut={onPressOut}
@@ -98,12 +99,3 @@ export default function Lock({ onUnlock, onLock, disabled, toggle }: Props) {
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: 100,
-    height: 100,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

@@ -1,4 +1,4 @@
-import { Animated, StyleSheet } from "react-native";
+import { Animated } from "react-native";
 import { Circle, G, Svg } from "react-native-svg";
 import {
   LOCK_CIRCLE_RADIUS,
@@ -16,7 +16,7 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 export default function LockCircle({ animatedFillValue }: Props) {
   return (
     <Svg
-      style={styles.container}
+      className="absolute"
       width={LOCK_CIRCLE_RADIUS * 2}
       height={LOCK_CIRCLE_RADIUS * 2}
       viewBox={`0 0 ${LOCK_HALF_CIRCLE * 2} ${LOCK_HALF_CIRCLE * 2}`}
@@ -45,9 +45,3 @@ export default function LockCircle({ animatedFillValue }: Props) {
     </Svg>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-  },
-});

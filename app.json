@@ -13,6 +13,14 @@
           "isAndroidBackgroundLocationEnabled": "true"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "557b8d16-1e2a-42b6-bec6-d3388e5365eb"
+      }
+    },
+    "android": {
+      "package": "com.kilianmandscharo.runner_v2"
+    }
   }
 }

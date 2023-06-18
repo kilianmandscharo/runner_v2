@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import HistoryItem from "../../components/HistoryItem";
 import { DatabaseConnector } from "../../database/database";
 import { Run } from "../../types/types";
+import * as GPXParser from "../../parser/gpxParser";
+import PageContainer from "../../components/PageContainer";
 
 const dbConnector = new DatabaseConnector();
 
@@ -13,38 +15,46 @@ export default function History() {
     dbConnector
       .getAllRuns()
       .then((runs) => setRuns(runs))
-      .catch((e) => console.log(e));
+      .catch((err) => {
+        if (err instanceof Error) {
+          throw err;
+        }
+      });
   }, []);
 
   const handleDeleteItem = async (id: number) => {
     try {
       await dbConnector.deleteRun(id);
       setRuns(runs.filter((r) => r.id !== id));
-    } catch (e) {
-      if (e instanceof Error) {
-        throw e;
+    } catch (err) {
+      if (err instanceof Error) {
+        throw err;
+      }
+    }
+  };
+
+  const handleExportRun = async (run: Run) => {
+    await GPXParser.parseAndSaveToDisk(run);
+    try {
+    } catch (err) {
+      if (err instanceof Error) {
+        throw err;
       }
     }
   };
 
   return (
-    <View style={styles.container}>
-      {runs.map((r) => (
-        <HistoryItem
-          key={r.id}
-          run={r}
-          onDelete={() => handleDeleteItem(r.id)}
-        />
-      ))}
-    </View>
+    <PageContainer>
+      <View className="flex-1 justify-center items-center" style={{ gap: 16 }}>
+        {runs.map((r) => (
+          <HistoryItem
+            key={r.id}
+            run={r}
+            onDelete={() => handleDeleteItem(r.id)}
+            onExport={() => handleExportRun(r)}
+          />
+        ))}
+      </View>
+    </PageContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 16,
-  },
-});

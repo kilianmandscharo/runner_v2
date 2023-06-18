@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text } from "react-native";
+import { View, Text } from "react-native";
 import { Circle, G, Svg } from "react-native-svg";
 import { formatTime, getTimeFromSeconds } from "../utils/utils";
 import Button from "./Button";
@@ -24,7 +24,10 @@ export default function Clock({ timeInSeconds, onStart, started }: Props) {
   const time = getTimeFromSeconds(timeInSeconds);
 
   return (
-    <View style={styles.container}>
+    <View
+      className="flex-1 justify-center items-center relative"
+      style={{ width: RADIUS * 2, height: RADIUS * 2 }}
+    >
       {!started ? (
         <Button
           text={"Start"}
@@ -36,7 +39,7 @@ export default function Clock({ timeInSeconds, onStart, started }: Props) {
       ) : (
         <>
           <Svg
-            style={styles.circle}
+            className="absolute"
             width={RADIUS * 2}
             height={RADIUS * 2}
             viewBox={`0 0 ${HALF_CIRCLE * 2} ${HALF_CIRCLE * 2}`}
@@ -75,27 +78,9 @@ export default function Clock({ timeInSeconds, onStart, started }: Props) {
               />
             </G>
           </Svg>
-          <Text style={styles.text}>{formatTime(time)}</Text>
+          <Text className="text-white text-4xl">{formatTime(time)}</Text>
         </>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    width: RADIUS * 2,
-    height: RADIUS * 2,
-    position: "relative",
-  },
-  text: {
-    fontSize: 46,
-    color: "white",
-  },
-  circle: {
-    position: "absolute",
-  },
-});

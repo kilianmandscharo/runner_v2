@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Text, View, StyleSheet, StatusBar } from "react-native";
+import { Text, View } from "react-native";
 import Button from "../../components/Button";
 import Clock from "../../components/Clock";
 import Lock from "../../components/Lock/Lock";
+import PageContainer from "../../components/PageContainer";
 import useNewRun from "../../hooks/useNewRun";
 
 export default function NewRun() {
@@ -22,72 +23,53 @@ export default function NewRun() {
   } = useNewRun();
 
   return (
-    <View style={styles.container}>
-      {!permissionGranted && <Text>No location service permission</Text>}
-      {permissionGranted && (
-        <>
-          <Clock timeInSeconds={seconds} onStart={start} started={started} />
-          <View style={styles.distanceContainer}>
-            <Text style={styles.distanceText}>
-              Distanz: {Math.floor(distance) / 1000} km
-            </Text>
-          </View>
-        </>
-      )}
-      <View style={styles.controls}>
-        <Lock
-          disabled={!started || finished}
-          toggle={finished}
-          onLock={() => setLocked(true)}
-          onUnlock={() => setLocked(false)}
-        />
-        {started && !running ? (
-          <Button onPress={start} text="Weiter" disabled={locked || finished} />
-        ) : (
-          <Button
-            onPress={stop}
-            text="Stopp"
-            disabled={!running || finished || locked}
-          />
+    <PageContainer>
+      <View className="flex-1 justify-center items-center">
+        {!permissionGranted && <Text>No location service permission</Text>}
+        {permissionGranted && (
+          <>
+            <Clock timeInSeconds={seconds} onStart={start} started={started} />
+            <View className="justify-center items-center border-teal-600 border-2 p-4 rounded-md">
+              <Text className="text-3xl text-white">
+                Distanz: {Math.floor(distance) / 1000} km
+              </Text>
+            </View>
+          </>
         )}
-        {!finished ? (
-          <Button
-            onPress={end}
-            text="Beenden"
-            disabled={finished || !started || locked}
+        <View
+          className="flex-1 justify-center items-center"
+          style={{ gap: 16 }}
+        >
+          <Lock
+            disabled={!started || finished}
+            toggle={finished}
+            onLock={() => setLocked(true)}
+            onUnlock={() => setLocked(false)}
           />
-        ) : (
-          <Button onPress={reset} text="Zurücksetzen" />
-        )}
+          {started && !running ? (
+            <Button
+              onPress={start}
+              text="Weiter"
+              disabled={locked || finished}
+            />
+          ) : (
+            <Button
+              onPress={stop}
+              text="Stopp"
+              disabled={!running || finished || locked}
+            />
+          )}
+          {!finished ? (
+            <Button
+              onPress={end}
+              text="Beenden"
+              disabled={finished || !started || locked}
+            />
+          ) : (
+            <Button onPress={reset} text="Zurücksetzen" />
+          )}
+        </View>
       </View>
-    </View>
+    </PageContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    gap: 16,
-    backgroundColor: "black",
-    marginTop: StatusBar.currentHeight,
-  },
-  controls: {
-    flex: 1,
-    gap: 16,
-    alignItems: "center",
-  },
-  distanceContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    borderColor: "teal",
-    borderWidth: 2,
-    padding: 16,
-    width: 300,
-    borderRadius: 8,
-  },
-  distanceText: {
-    fontSize: 40,
-    color: "white",
-  },
-});
