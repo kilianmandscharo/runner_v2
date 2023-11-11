@@ -74,16 +74,32 @@ export class DatabaseConnector {
     }
   }
 
-  async deleteRun(runId: number): Promise<number> {
+  async deleteRun(runID: number): Promise<number> {
     const deleteRunQuery = `
     DELETE FROM run
     WHERE id = ?;
   `;
 
     try {
-      const result = await this.executeTransaction(deleteRunQuery, [runId]);
+      const result = await this.executeTransaction(deleteRunQuery, [runID]);
       const rowsAffected = result.rowsAffected;
       return rowsAffected;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getRun(runID: number): Promise<Run> {
+    const getRunQuery = `
+    SELECT * from run
+    WHERE id = ?;
+  `;
+
+    try {
+      const result = await this.executeTransaction(getRunQuery, [runID]);
+      const run = result.rows.item(0);
+      run.path = JSON.parse(run.path);
+      return run;
     } catch (err) {
       throw err;
     }

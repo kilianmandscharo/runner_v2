@@ -4,7 +4,6 @@ import { DatabaseConnector } from "../../database/database";
 import { Run } from "../../types/types";
 import PageContainer from "../../components/PageContainer";
 import HistoryItem from "../../components/HistoryItem";
-import * as GPXParser from "../../parser/gpxParser";
 
 const dbConnector = new DatabaseConnector();
 
@@ -33,14 +32,8 @@ export default function History() {
     }
   };
 
-  const handleExportRun = async (run: Run) => {
-    try {
-      await GPXParser.parseAndSaveToDisk(run);
-    } catch (err) {
-      if (err instanceof Error) {
-        throw err;
-      }
-    }
+  const handleExportRun = async (_: Run) => {
+    // TODO: Implement parsing and saving to disk correctly
   };
 
   return (

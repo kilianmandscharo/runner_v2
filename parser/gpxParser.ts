@@ -30,17 +30,7 @@ function parse(runs: Run[]): string {
 
 async function saveToDisk(data: string, id: string): Promise<void> {
   try {
-    const directory = FileSystem.documentDirectory + "Download/";
-    const fileName = `run_${id}.gpx`;
-    const filePath = directory + fileName;
-
-    console.log(filePath);
-
-    // Check if the download directory exists
-    const directoryInfo = await FileSystem.getInfoAsync(directory);
-    if (!directoryInfo.exists) {
-      return;
-    }
+    const filePath = FileSystem.documentDirectory + `run_${id}.gpx`;
 
     // Write the GPX data to the file
     await FileSystem.writeAsStringAsync(filePath, data, {

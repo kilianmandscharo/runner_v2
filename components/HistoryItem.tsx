@@ -2,8 +2,10 @@ import { View, Text } from "react-native";
 import { Run } from "../types/types";
 import Button from "./Button";
 import { AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import Dialog from "./Dialog";
+import { useRouter } from "expo-router";
 
 interface Props {
   run: Run;
@@ -12,6 +14,8 @@ interface Props {
 }
 
 export default function HistoryItem({ run, onDelete, onExport }: Props) {
+  const router = useRouter();
+
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   return (
@@ -21,6 +25,18 @@ export default function HistoryItem({ run, onDelete, onExport }: Props) {
         className="flex-1 flex-row justify-end items-center"
         style={{ gap: 8 }}
       >
+        <Button
+          onPress={() => router.push(`/show/${run.id}`)}
+          width={40}
+          height={40}
+          icon={
+            <MaterialCommunityIcons
+              name="map-marker-path"
+              size={24}
+              color="white"
+            />
+          }
+        />
         <Button
           onPress={onExport}
           width={40}
