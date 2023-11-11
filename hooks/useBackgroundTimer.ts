@@ -33,8 +33,12 @@ export default function useBackgroundTimer(): {
       newAppState === "active"
     ) {
       if (startTime.current) {
-        const differenceInSeconds = dayjs().diff(startTime.current, "second");
-        setSeconds(secondsAtLastStop.current + differenceInSeconds);
+        if (timer.current) {
+          const differenceInSeconds = dayjs().diff(startTime.current, "second");
+          setSeconds(secondsAtLastStop.current + differenceInSeconds);
+        } else {
+          setSeconds(secondsAtLastStop.current);
+        }
       }
     }
     appState.current = newAppState;

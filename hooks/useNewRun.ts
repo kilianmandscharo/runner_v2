@@ -8,7 +8,6 @@ import useBackgroundPath from "./useBackgroundPath";
 const dbConnector = new DatabaseConnector();
 
 export default function useNewRun(): {
-  permissionGranted: boolean;
   seconds: number;
   distance: number;
   started: boolean;
@@ -24,13 +23,11 @@ export default function useNewRun(): {
   const [running, setRunning] = useState<boolean>(false);
 
   const { startTimer, stopTimer, resetTimer, seconds } = useBackgroundTimer();
-  const { permissionGranted, path, distance, startPath, stopPath, resetPath } =
+
+  const { path, distance, startPath, stopPath, resetPath } =
     useBackgroundPath();
 
   const startTime = useRef<null | string>(null);
-
-  console.log("distance:", distance);
-  console.log("path:", path.length);
 
   const start = async () => {
     startTime.current = dayjs().toISOString();
@@ -78,7 +75,6 @@ export default function useNewRun(): {
   };
 
   return {
-    permissionGranted,
     distance,
     seconds,
     started,

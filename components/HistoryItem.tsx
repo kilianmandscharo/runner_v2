@@ -15,7 +15,7 @@ export default function HistoryItem({ run, onDelete, onExport }: Props) {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   return (
-    <View className="bg-rose-400 rounded-s justify-between items-center flex-row p-4">
+    <View className="bg-slate-600 rounded justify-between items-center flex-row p-4 m-2">
       <Text className="text-white">{run.id}</Text>
       <View
         className="flex-1 flex-row justify-end items-center"
@@ -39,8 +39,14 @@ export default function HistoryItem({ run, onDelete, onExport }: Props) {
       <Dialog
         open={dialogOpen}
         text="Lauf löschen"
-        onAccept={onDelete}
-        onCancel={() => setDialogOpen(false)}
+        acceptButton={<Button bg="danger" text="Weiter" onPress={onDelete} />}
+        cancelButton={
+          <Button
+            text="Abbrechen"
+            variant="secondary"
+            onPress={() => setDialogOpen(false)}
+          />
+        }
       />
     </View>
   );

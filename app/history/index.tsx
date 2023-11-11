@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { View } from "react-native";
-import HistoryItem from "../../components/HistoryItem";
+import { FlatList } from "react-native";
 import { DatabaseConnector } from "../../database/database";
 import { Run } from "../../types/types";
-import * as GPXParser from "../../parser/gpxParser";
 import PageContainer from "../../components/PageContainer";
+import HistoryItem from "../../components/HistoryItem";
+import * as GPXParser from "../../parser/gpxParser";
 
 const dbConnector = new DatabaseConnector();
 
@@ -34,8 +34,8 @@ export default function History() {
   };
 
   const handleExportRun = async (run: Run) => {
-    await GPXParser.parseAndSaveToDisk(run);
     try {
+      await GPXParser.parseAndSaveToDisk(run);
     } catch (err) {
       if (err instanceof Error) {
         throw err;
@@ -45,16 +45,18 @@ export default function History() {
 
   return (
     <PageContainer>
-      <View className="flex-1 justify-center items-center" style={{ gap: 16 }}>
-        {runs.map((r) => (
+      <FlatList
+        data={runs}
+        renderItem={({ item: r }) => (
           <HistoryItem
             key={r.id}
             run={r}
             onDelete={() => handleDeleteItem(r.id)}
             onExport={() => handleExportRun(r)}
           />
-        ))}
-      </View>
+        )}
+        keyExtractor={(item) => item.id.toString()}
+      />
     </PageContainer>
   );
 }

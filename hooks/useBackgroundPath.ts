@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Location } from "../types/types";
-import * as Storage from "../storage/storage";
 import useBackgroundLocation from "./useBackgroundLocation";
+import { calculatePointDistance } from "../utils/utils";
+import * as Storage from "../storage/storage";
 
 export default function useBackgroundPath(): {
-  permissionGranted: boolean;
   path: Location[];
   distance: number;
   startPath: () => Promise<void>;
@@ -15,8 +15,7 @@ export default function useBackgroundPath(): {
   const path = useRef<Location[]>([]);
   const intervalID = useRef<NodeJS.Timer | null>(null);
 
-  const { permissionGranted, startLocation, stopLocation } =
-    useBackgroundLocation();
+  const { startLocation, stopLocation } = useBackgroundLocation();
 
   useEffect(() => {
     Storage.getLocations().then(handleNewLocations);
@@ -52,22 +51,32 @@ export default function useBackgroundPath(): {
   };
 
   const handleNewLocations = (locations: Location[]) => {
-    path.current = [...path.current, ...locations];
-    setDistance((prev) => prev + 1);
+    if (locations.length === 0) {
+      return;
+    }
+
     Storage.deleteLocations();
 
-    // let newDistance = 0;
-    // locations.forEach((location, i) => {
-    //   const toPoint =
-    //     i === 0 ? path.current[path.current.length - 1] : locations[i - 1];
-    //   newDistance += calculatePointDistance(location, toPoint);
-    // });
-    //
-    // setDistance((prev) => prev + newDistance);
+    let newDistance = 0;
+
+    if (path.current.length === 0) {
+      for (let i = 1; i < locations.length; i++) {
+        newDistance += calculatePointDistance(locations[i - 1], locations[i]);
+      }
+    } else {
+      for (let i = 0; i < locations.length; i++) {
+        newDistance += calculatePointDistance(
+          i === 0 ? path.current[path.current.length - 1] : locations[i - 1],
+          locations[i]
+        );
+      }
+    }
+
+    path.current = [...path.current, ...locations];
+    setDistance((prev) => prev + newDistance);
   };
 
   return {
-    permissionGranted,
     path: path.current,
     distance,
     startPath,

@@ -18,9 +18,15 @@ interface Props {
   timeInSeconds: number;
   onStart: () => void;
   started: boolean;
+  disabled: boolean;
 }
 
-export default function Clock({ timeInSeconds, onStart, started }: Props) {
+export default function Clock({
+  timeInSeconds,
+  onStart,
+  started,
+  disabled,
+}: Props) {
   const time = getTimeFromSeconds(timeInSeconds);
 
   return (
@@ -35,6 +41,7 @@ export default function Clock({ timeInSeconds, onStart, started }: Props) {
           width={RADIUS * 2}
           height={RADIUS * 2}
           rounded
+          disabled={disabled}
         />
       ) : (
         <>

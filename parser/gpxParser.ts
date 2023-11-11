@@ -34,7 +34,9 @@ async function saveToDisk(data: string, id: string): Promise<void> {
     const fileName = `run_${id}.gpx`;
     const filePath = directory + fileName;
 
-    // Check if the download directory exists, if not create it
+    console.log(filePath);
+
+    // Check if the download directory exists
     const directoryInfo = await FileSystem.getInfoAsync(directory);
     if (!directoryInfo.exists) {
       return;

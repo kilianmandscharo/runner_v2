@@ -26,21 +26,43 @@ export default function Button({
   icon,
   bg = "primary",
   rounded,
+  variant = "primary",
 }: Props) {
-  const bgMap: Record<ButtonColor, string> = {
-    primary: "bg-teal-600",
-    danger: "bg-red-500",
+  const colorMap: Record<ButtonColor, string> = {
+    primary: "#0d9488",
+    danger: "#ef4444",
+  };
+
+  const getBackgroundColor = () => {
+    switch (variant) {
+      case "primary":
+        return colorMap[bg];
+      case "secondary":
+        return "transparent";
+    }
+  };
+
+  const getBorderColor = () => {
+    switch (variant) {
+      case "primary":
+        return "transparent";
+      case "secondary":
+        return colorMap[bg];
+    }
   };
 
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress} disabled={disabled}>
       <View
-        className={`${bgMap[bg]} justify-center items-center`}
+        className="justify-center items-center"
         style={{
           width: width,
           height: height,
           opacity: disabled ? 0.4 : 1,
           borderRadius: rounded ? width / 2 : 4,
+          borderWidth: variant === "primary" ? 0 : 2,
+          backgroundColor: getBackgroundColor(),
+          borderColor: getBorderColor(),
         }}
       >
         {text && (
