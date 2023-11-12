@@ -14,8 +14,8 @@ export default function Dialog({
   cancelButton,
 }: Props) {
   return (
-    <Modal visible={open} transparent animationType="slide">
-      <View className="flex-1 justify-center items-center bg-transparent">
+    <Modal visible={open} transparent animationType="fade">
+      <View className="flex-1 justify-center items-center bg-slate-700/60">
         <View
           style={{ gap: 32 }}
           className="h-fit w-11/12 justify-between items-center p-8 rounded-s bg-slate-700"

@@ -2,10 +2,8 @@ import { useState, useRef } from "react";
 import useBackgroundTimer from "./useBackgroundTimer";
 import dayjs from "dayjs";
 import { Run } from "../types/types";
-import { DatabaseConnector } from "../database/database";
 import useBackgroundPath from "./useBackgroundPath";
-
-const dbConnector = new DatabaseConnector();
+import db from "../database/database";
 
 export default function useNewRun(): {
   seconds: number;
@@ -45,6 +43,7 @@ export default function useNewRun(): {
 
   const end = async () => {
     stopTimer();
+    await stopPath();
     setRunning(false);
     setFinished(true);
 
@@ -58,7 +57,7 @@ export default function useNewRun(): {
     };
 
     try {
-      await dbConnector.saveRun(run);
+      await db.saveRun(run);
     } catch (e) {
       if (e instanceof Error) {
         throw e;

@@ -18,7 +18,8 @@ export default function useBackgroundPath(): {
   const { startLocation, stopLocation } = useBackgroundLocation();
 
   useEffect(() => {
-    Storage.getLocations().then(handleNewLocations);
+    // Delete all locations on mounting
+    Storage.deleteLocations().then();
 
     return () => {
       if (intervalID.current) {

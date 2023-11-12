@@ -6,6 +6,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import Dialog from "./Dialog";
 import { useRouter } from "expo-router";
+import dayjs from "dayjs";
+import { formatTime, getTimeFromSeconds } from "../utils/utils";
 
 interface Props {
   run: Run;
@@ -18,9 +20,22 @@ export default function HistoryItem({ run, onDelete, onExport }: Props) {
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
+  const date = dayjs(run.start).format("DD.MM.YYYY");
+  const startTime = dayjs(run.start).format("HH:mm");
+  const endTime = dayjs(run.end).format("HH:mm");
+
   return (
-    <View className="bg-slate-600 rounded justify-between items-center flex-row p-4 m-2">
-      <Text className="text-white">{run.id}</Text>
+    <View className="bg-slate-600 rounded justify-between items-center flex-row p-4 mb-4">
+      <View>
+        <Text className="text-white">{date}</Text>
+        <Text className="text-white">
+          {startTime} - {endTime}
+        </Text>
+        <Text className="text-white">{Math.floor(run.distance) / 1000} km</Text>
+        <Text className="text-white">
+          {formatTime(getTimeFromSeconds(run.time))}
+        </Text>
+      </View>
       <View
         className="flex-1 flex-row justify-end items-center"
         style={{ gap: 8 }}

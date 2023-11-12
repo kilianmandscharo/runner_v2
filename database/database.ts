@@ -1,9 +1,10 @@
 import * as SQLite from "expo-sqlite";
+import { SQLResultSet } from "expo-sqlite";
 import { Run } from "../types/types";
 
 const DB_NAME = "data.db";
 
-export class DatabaseConnector {
+class DatabaseConnector {
   private db: SQLite.Database = SQLite.openDatabase(DB_NAME);
 
   constructor() {
@@ -27,7 +28,10 @@ export class DatabaseConnector {
     });
   }
 
-  private executeTransaction(query: string, params: any[] = []): Promise<any> {
+  private executeTransaction(
+    query: string,
+    params: any[] = []
+  ): Promise<SQLResultSet> {
     return new Promise<any>((resolve, reject) => {
       this.db.transaction(
         (tx) => {
@@ -135,3 +139,6 @@ export class DatabaseConnector {
     }
   }
 }
+
+const db = new DatabaseConnector();
+export default db;

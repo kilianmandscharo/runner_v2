@@ -3,11 +3,11 @@ import { Text, View } from "react-native";
 import Button from "../../components/Button";
 import Clock from "../../components/Clock";
 import Lock from "../../components/Lock/Lock";
-import PageContainer from "../../components/PageContainer";
-import useNewRun from "../../hooks/useNewRun";
 import Dialog from "../../components/Dialog";
 import { startActivityAsync, ActivityAction } from "expo-intent-launcher";
 import useLocationPermission from "../../hooks/useLocationPermission";
+import useNewRun from "../../hooks/useNewRun";
+import PageContainer from "../../components/PageContainer";
 
 export default function NewRun() {
   const [locked, setLocked] = useState<boolean>(true);

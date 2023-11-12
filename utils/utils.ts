@@ -37,3 +37,35 @@ export function formatTime(time: Time): string {
   const h = time.hours < 10 ? `0${time.hours}` : time.hours.toString();
   return `${h}:${m}:${s}`;
 }
+
+export function isDateGreaterOrEqual(d: Date, target?: Date): boolean {
+  if (target === undefined) {
+    return true;
+  }
+
+  // Only take the day, month and year into account
+  const dWithoutTime = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const targetWithoutTime = new Date(
+    target.getFullYear(),
+    target.getMonth(),
+    target.getDate()
+  );
+
+  return dWithoutTime >= targetWithoutTime;
+}
+
+export function isDateSmallerOrEqual(d: Date, target?: Date): boolean {
+  if (target === undefined) {
+    return true;
+  }
+
+  // Only take the day, month and year into account
+  const dWithoutTime = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const targetWithoutTime = new Date(
+    target.getFullYear(),
+    target.getMonth(),
+    target.getDate()
+  );
+
+  return dWithoutTime <= targetWithoutTime;
+}
