@@ -1,5 +1,6 @@
 import MapView, { Polyline } from "react-native-maps";
 import { Run } from "../types/types";
+import { PROVIDER_GOOGLE } from "react-native-maps";
 
 interface Props {
   run: Run | null;
@@ -8,6 +9,7 @@ interface Props {
 export default function Map({ run }: Props) {
   return (
     <MapView
+      provider={PROVIDER_GOOGLE}
       style={{ width: "100%", height: "100%" }}
       region={{
         latitude: run?.path[0].lat ?? 0,

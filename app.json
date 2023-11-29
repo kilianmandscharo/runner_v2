@@ -22,5 +22,13 @@
     "android": {
       "package": "com.kilianmandscharo.runner_v2"
     }
+  },
+  "android": {
+    "package": "com.kilianmandscharo.runner_v2",
+    "config": {
+      "googleMaps": {
+        "apiKey": "AIzaSyBVq9tOKZQAIfnzY_yULg8u2MPN1QlDcAM"
+      }
+    }
   }
 }
