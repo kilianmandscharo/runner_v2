@@ -10,8 +10,12 @@ enum LOCATION_ERROR {
 export default function useLocationPermission(): {
   checkPermission: () => void;
   permissionGranted: boolean;
+  locationDialogClosed: boolean;
+  onCloseLocationDialog: () => void;
 } {
   const [permissionGranted, setPermissionGranted] = useState<boolean>(true);
+  const [locationDialogClosed, setLocationDialogClosed] =
+    useState<boolean>(false);
 
   useEffect(() => {
     checkPermission();
@@ -21,17 +25,20 @@ export default function useLocationPermission(): {
     if (
       (await Location.requestForegroundPermissionsAsync())["status"] !==
       "granted"
-    )
+    ) {
       return LOCATION_ERROR.FG_DENIED;
+    }
 
     if (
       (await Location.requestBackgroundPermissionsAsync())["status"] !==
       "granted"
-    )
+    ) {
       return LOCATION_ERROR.BG_DENIED;
+    }
 
-    if (!(await Location.hasServicesEnabledAsync()))
+    if (!(await Location.hasServicesEnabledAsync())) {
       return LOCATION_ERROR.SERVICE_DISABLED;
+    }
 
     return null;
   };
@@ -39,7 +46,6 @@ export default function useLocationPermission(): {
   const checkPermission = () => {
     requestPermisions()
       .then((locationError) => {
-        // TODO: Return the actual error for better error handling
         if (locationError !== null) {
           setPermissionGranted(false);
         } else {
@@ -53,8 +59,14 @@ export default function useLocationPermission(): {
       });
   };
 
+  const onCloseLocationDialog = () => {
+    setLocationDialogClosed(true);
+  };
+
   return {
     checkPermission,
     permissionGranted,
+    locationDialogClosed,
+    onCloseLocationDialog,
   };
 }

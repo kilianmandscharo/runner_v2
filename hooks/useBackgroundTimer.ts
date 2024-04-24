@@ -1,15 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { AppState, AppStateStatus } from "react-native";
 
-export default function useBackgroundTimer(): {
+export default function useBackgroundTimer(
+  seconds: number,
+  onSecondsChange: (seconds: number) => void,
+  increment: () => void,
+): {
   startTimer: () => void;
   stopTimer: () => void;
   resetTimer: () => void;
   seconds: number;
 } {
-  const [seconds, setSeconds] = useState(0);
-  const timer = useRef<NodeJS.Timer>();
+  const timer = useRef<NodeJS.Timeout>();
   const startTime = useRef<Dayjs>();
   const secondsAtLastStop = useRef(0);
   const appState = useRef(AppState.currentState);
@@ -17,7 +20,7 @@ export default function useBackgroundTimer(): {
   useEffect(() => {
     const subscription = AppState.addEventListener(
       "change",
-      handleAppStateChange
+      handleAppStateChange,
     );
 
     return () => subscription.remove();
@@ -35,9 +38,9 @@ export default function useBackgroundTimer(): {
       if (startTime.current) {
         if (timer.current) {
           const differenceInSeconds = dayjs().diff(startTime.current, "second");
-          setSeconds(secondsAtLastStop.current + differenceInSeconds);
+          onSecondsChange(secondsAtLastStop.current + differenceInSeconds);
         } else {
-          setSeconds(secondsAtLastStop.current);
+          onSecondsChange(secondsAtLastStop.current);
         }
       }
     }
@@ -49,7 +52,7 @@ export default function useBackgroundTimer(): {
       return;
     }
     timer.current = setInterval(() => {
-      setSeconds((prev) => prev + 1);
+      increment();
     }, 1000);
     startTime.current = dayjs();
   };
@@ -64,7 +67,7 @@ export default function useBackgroundTimer(): {
     clearInterval(timer.current);
     timer.current = undefined;
     secondsAtLastStop.current = 0;
-    setSeconds(0);
+    onSecondsChange(0);
   };
 
   return { startTimer: start, stopTimer: stop, resetTimer: reset, seconds };

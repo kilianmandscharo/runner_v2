@@ -20,3 +20,10 @@ export interface Time {
   minutes: number;
   seconds: number;
 }
+
+export enum RunState {
+  Prestart = "Prestart",
+  Started = "Started",
+  Stopped = "Stopped",
+  Finished = "Finished",
+}

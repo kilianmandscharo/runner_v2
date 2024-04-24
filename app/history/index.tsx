@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { FlatList, View, Text, Pressable } from "react-native";
 import { Run } from "../../types/types";
 import HistoryItem from "../../components/HistoryItem";
-import db from "../../database/database";
 import PageContainer from "../../components/PageContainer";
 import { isDateGreaterOrEqual, isDateSmallerOrEqual } from "../../utils/utils";
 import DateFilterDialog from "../../components/DateFilterDialog";
@@ -26,24 +25,24 @@ export default function History() {
       runs.filter(
         (r) =>
           isDateGreaterOrEqual(new Date(r.start), dateFilter.start) &&
-          isDateSmallerOrEqual(new Date(r.end), dateFilter.end)
+          isDateSmallerOrEqual(new Date(r.end), dateFilter.end),
       ),
-    [dateFilter, runs]
+    [dateFilter, runs],
   );
 
-  useEffect(() => {
-    db.getAllRuns()
-      .then((runs) => setRuns(runs))
-      .catch((err) => {
-        if (err instanceof Error) {
-          throw err;
-        }
-      });
-  }, []);
+  // useEffect(() => {
+  //   db.getAllRuns()
+  //     .then((runs) => setRuns(runs))
+  //     .catch((err) => {
+  //       if (err instanceof Error) {
+  //         throw err;
+  //       }
+  //     });
+  // }, []);
 
   const handleDeleteItem = async (id: number) => {
     try {
-      await db.deleteRun(id);
+      // await db.deleteRun(id);
       setRuns(runs.filter((r) => r.id !== id));
     } catch (err) {
       if (err instanceof Error) {

@@ -17,6 +17,16 @@ export function calculatePointDistance(p1: Location, p2: Location): number {
   return earthRadius * c;
 }
 
+export function calculateDistanceBetweenLocations(
+  locations: Location[],
+): number {
+  let distance = 0;
+  for (let i = 0; i < locations.length - 1; i++) {
+    distance += calculatePointDistance(locations[i], locations[i + 1]);
+  }
+  return distance;
+}
+
 export function getTimeFromSeconds(remainingSeconds: number): Time {
   const hours = Math.floor(remainingSeconds / 3600);
   remainingSeconds = remainingSeconds - hours * 3600;
@@ -48,7 +58,7 @@ export function isDateGreaterOrEqual(d: Date, target?: Date): boolean {
   const targetWithoutTime = new Date(
     target.getFullYear(),
     target.getMonth(),
-    target.getDate()
+    target.getDate(),
   );
 
   return dWithoutTime >= targetWithoutTime;
@@ -64,7 +74,7 @@ export function isDateSmallerOrEqual(d: Date, target?: Date): boolean {
   const targetWithoutTime = new Date(
     target.getFullYear(),
     target.getMonth(),
-    target.getDate()
+    target.getDate(),
   );
 
   return dWithoutTime <= targetWithoutTime;

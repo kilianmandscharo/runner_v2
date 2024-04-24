@@ -4,6 +4,7 @@ import { formatTime, getTimeFromSeconds } from "../utils/utils";
 import Button from "./Button";
 
 const RADIUS = 130;
+const DIAMETER = RADIUS * 2;
 const STROKE_WIDTH = 16;
 const HALF_CIRCLE = RADIUS + STROKE_WIDTH;
 
@@ -13,6 +14,9 @@ const RADIUS_MIN = RADIUS + STROKE_WIDTH_INNER / 2;
 
 const CIRCUMFERENCE_SEC = 2 * Math.PI * RADIUS_SEC;
 const CIRCUMFERENCE_MIN = 2 * Math.PI * RADIUS_MIN;
+
+const SEGMENT_SEC = CIRCUMFERENCE_SEC / 60;
+const SEGMENT_MIN = CIRCUMFERENCE_MIN / 60;
 
 interface Props {
   timeInSeconds: number;
@@ -29,17 +33,23 @@ export default function Clock({
 }: Props) {
   const time = getTimeFromSeconds(timeInSeconds);
 
+  const seconds = time.seconds || 60;
+  const minutes = time.minutes || 60;
+
+  const offsetSec = CIRCUMFERENCE_SEC - SEGMENT_SEC * seconds;
+  const offsetMin = CIRCUMFERENCE_MIN - SEGMENT_MIN * minutes;
+
   return (
     <View
       className="flex-1 justify-center items-center relative"
-      style={{ width: RADIUS * 2, height: RADIUS * 2 }}
+      style={{ width: DIAMETER, height: DIAMETER }}
     >
       {!started ? (
         <Button
           text={"Start"}
           onPress={onStart}
-          width={RADIUS * 2}
-          height={RADIUS * 2}
+          width={DIAMETER}
+          height={DIAMETER}
           rounded
           disabled={disabled}
         />
@@ -47,29 +57,18 @@ export default function Clock({
         <>
           <Svg
             className="absolute"
-            width={RADIUS * 2}
-            height={RADIUS * 2}
+            width={DIAMETER}
+            height={DIAMETER}
             viewBox={`0 0 ${HALF_CIRCLE * 2} ${HALF_CIRCLE * 2}`}
           >
             <G rotation="-90" origin={`${HALF_CIRCLE}, ${HALF_CIRCLE}`}>
               <Circle
                 cx="50%"
                 cy="50%"
-                stroke="white"
+                stroke="#e2e8f0"
                 strokeWidth={STROKE_WIDTH}
                 r={RADIUS}
-              />
-              <Circle
-                cx="50%"
-                cy="50%"
-                stroke="violet"
-                strokeWidth={STROKE_WIDTH_INNER}
-                r={RADIUS_SEC}
-                strokeDasharray={CIRCUMFERENCE_SEC}
-                strokeDashoffset={
-                  CIRCUMFERENCE_SEC -
-                  Math.floor(CIRCUMFERENCE_SEC / 60) * time.seconds
-                }
+                fill="black"
               />
               <Circle
                 cx="50%"
@@ -78,10 +77,18 @@ export default function Clock({
                 strokeWidth={STROKE_WIDTH_INNER}
                 r={RADIUS_MIN}
                 strokeDasharray={CIRCUMFERENCE_MIN}
-                strokeDashoffset={
-                  CIRCUMFERENCE_MIN -
-                  Math.floor(CIRCUMFERENCE_MIN / 60) * time.minutes
-                }
+                strokeDashoffset={offsetMin}
+                fill="none"
+              />
+              <Circle
+                cx="50%"
+                cy="50%"
+                stroke="violet"
+                strokeWidth={STROKE_WIDTH_INNER}
+                r={RADIUS_SEC}
+                strokeDasharray={CIRCUMFERENCE_SEC}
+                strokeDashoffset={offsetSec}
+                fill="none"
               />
             </G>
           </Svg>

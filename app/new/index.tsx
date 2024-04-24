@@ -6,27 +6,21 @@ import Lock from "../../components/Lock/Lock";
 import Dialog from "../../components/Dialog";
 import { startActivityAsync, ActivityAction } from "expo-intent-launcher";
 import useLocationPermission from "../../hooks/useLocationPermission";
-import useNewRun from "../../hooks/useNewRun";
 import PageContainer from "../../components/PageContainer";
+import useRun from "../../hooks/useRun";
+import { RunState } from "../../types/types";
+import LocationPermissionDialog from "../../components/LocationPermissionDialog";
+import RunControl from "../../components/RunControl";
 
 export default function NewRun() {
-  const [locked, setLocked] = useState<boolean>(true);
-  const [locationDialogClosed, setLocationDialogClosed] =
-    useState<boolean>(false);
-
-  const { checkPermission, permissionGranted } = useLocationPermission();
-
   const {
-    seconds,
-    distance,
-    started,
-    finished,
-    running,
-    start,
-    stop,
-    end,
-    reset,
-  } = useNewRun();
+    checkPermission,
+    permissionGranted,
+    locationDialogClosed,
+    onCloseLocationDialog,
+  } = useLocationPermission();
+
+  const { seconds, distance, state, start, stop, end, reset } = useRun();
 
   return (
     <PageContainer>
@@ -34,7 +28,7 @@ export default function NewRun() {
         <Clock
           timeInSeconds={seconds}
           onStart={start}
-          started={started}
+          started={state !== RunState.Prestart}
           disabled={!permissionGranted}
         />
         <View className="justify-center items-center p-6 rounded-md bg-slate-700 shadow-xl w-11/12">
@@ -42,67 +36,19 @@ export default function NewRun() {
             Distanz: {Math.floor(distance) / 1000} km
           </Text>
         </View>
-        <View
-          className="flex-1 justify-center items-center"
-          style={{ gap: 16 }}
-        >
-          <Lock
-            disabled={!started || finished}
-            toggle={finished}
-            onLock={() => setLocked(true)}
-            onUnlock={() => setLocked(false)}
-          />
-          {started && !running ? (
-            <Button
-              onPress={start}
-              text="Weiter"
-              disabled={locked || finished}
-            />
-          ) : (
-            <Button
-              onPress={stop}
-              text="Stopp"
-              disabled={!running || finished || locked}
-            />
-          )}
-          {!finished ? (
-            <Button
-              onPress={end}
-              text="Beenden"
-              disabled={finished || !started || locked}
-            />
-          ) : (
-            <Button
-              onPress={() => {
-                reset();
-                setLocked(true);
-              }}
-              text="Zurücksetzen"
-            />
-          )}
-        </View>
+        <RunControl
+          state={state}
+          start={start}
+          stop={stop}
+          end={end}
+          reset={reset}
+        />
       </View>
-      <Dialog
-        open={!permissionGranted && !locationDialogClosed}
-        text="Aktiviere deinen Standort um einen neuen Lauf zu starten."
-        cancelButton={
-          <Button
-            text="Fertig"
-            onPress={() => {
-              setLocationDialogClosed(true);
-              checkPermission();
-            }}
-            variant="secondary"
-          />
-        }
-        acceptButton={
-          <Button
-            text="Einstellungen"
-            onPress={() =>
-              startActivityAsync(ActivityAction.LOCATION_SOURCE_SETTINGS)
-            }
-          />
-        }
+      <LocationPermissionDialog
+        permissionGranted={permissionGranted}
+        locationDialogClosed={locationDialogClosed}
+        checkPermission={checkPermission}
+        onCloseLocationDialog={onCloseLocationDialog}
       />
     </PageContainer>
   );
