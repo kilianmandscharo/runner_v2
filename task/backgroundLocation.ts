@@ -1,6 +1,6 @@
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import { addLocations } from "../database/currentRunDatabase";
+import { currentRunDb } from "../database/currentRunDatabase";
 
 const LOCATION_TASK_NAME = "background-location-task";
 
@@ -12,7 +12,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
     return;
   }
   const locations = (data as any).locations as Location.LocationObject[];
-  await addLocations(
+  await currentRunDb.addLocations(
     locations.map((l) => ({
       timestamp: l.timestamp,
       lon: l.coords.longitude,

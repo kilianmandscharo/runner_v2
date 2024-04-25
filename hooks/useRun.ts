@@ -1,18 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import useBackgroundTimer from "./useBackgroundTimer";
 import { RunState } from "../types/types";
-import { CurrentRun, currentRun } from "../database/schema";
+import { CurrentRun } from "../database/schema";
 import {
   startBackgroundLocationTask,
   stopBackgroundLocationTask,
 } from "../task/backgroundLocation";
-import {
-  createCurrentRun,
-  deleteCurrentRun,
-  getCurrentRun,
-  getDistance,
-  updateRun,
-} from "../database/currentRunDatabase";
+import { currentRunDb } from "../database/currentRunDatabase";
 
 export default function useRun(): {
   seconds: number;
@@ -34,7 +28,13 @@ export default function useRun(): {
   );
 
   useEffect(() => {
-    getCurrentRun().then(setRun);
+    (async () => {
+      const currentRun =
+        (await currentRunDb.getCurrentRun()) ??
+        (await currentRunDb.createCurrentRun());
+      setRun(currentRun);
+    })();
+    currentRunDb.getCurrentRun().then(setRun);
   }, []);
 
   const incrementRunTime = () => {
@@ -55,10 +55,13 @@ export default function useRun(): {
 
   const startDatabaseSync = () => {
     databaseSyncTimer.current = setInterval(async () => {
-      const distance = await getDistance();
+      const distance = await currentRunDb.getDistance();
       updateRunDistance(distance);
       if (run) {
-        await updateRun(run.time, run.state as RunState);
+        await currentRunDb.updateRun({
+          time: run.time,
+          state: run.state as RunState,
+        });
       }
     }, 5000);
   };
@@ -70,10 +73,10 @@ export default function useRun(): {
   };
 
   const start = async () => {
-    if (!run) {
-      const currentRun = await createCurrentRun();
-      setRun(currentRun);
-    }
+    await currentRunDb.updateRun({
+      start: new Date().toISOString(),
+      state: RunState.Started,
+    });
     startTimer();
     await startBackgroundLocationTask();
     startDatabaseSync();
@@ -96,7 +99,7 @@ export default function useRun(): {
 
   const reset = async () => {
     resetTimer();
-    await deleteCurrentRun();
+    await currentRunDb.deleteCurrentRun();
   };
 
   return {

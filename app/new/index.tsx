@@ -1,10 +1,5 @@
-import { useState } from "react";
 import { Text, View } from "react-native";
-import Button from "../../components/Button";
 import Clock from "../../components/Clock";
-import Lock from "../../components/Lock/Lock";
-import Dialog from "../../components/Dialog";
-import { startActivityAsync, ActivityAction } from "expo-intent-launcher";
 import useLocationPermission from "../../hooks/useLocationPermission";
 import PageContainer from "../../components/PageContainer";
 import useRun from "../../hooks/useRun";

@@ -1,91 +1,115 @@
 import * as SQLite from "expo-sqlite";
 import * as schema from "./schema";
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import { desc, eq } from "drizzle-orm";
-import { RunState, Location } from "../types/types";
+import { ExpoSQLiteDatabase, drizzle } from "drizzle-orm/expo-sqlite";
+import { desc } from "drizzle-orm";
+import { Location } from "../types/types";
 import { calculateDistanceBetweenLocations } from "../utils/utils";
+import { CurrentRun } from "./schema";
 
-const client: SQLite.SQLiteDatabase = SQLite.openDatabaseSync("current_run.db");
+class CurrentRunDatabase {
+  constructor(private db: ExpoSQLiteDatabase<typeof schema>) {}
 
-export const db = drizzle(client, { schema });
-
-export async function getCurrentRun() {
-  return await db.query.currentRun.findFirst();
-}
-
-// async function getCurrentRunWithLocations() {
-//   const currentRun = await getCurrentRun();
-//   if (currentRun) {
-//     const locations = await db.query.location.findMany();
-//     return {
-//       ...currentRun,
-//       path: locations,
-//     };
-//   }
-// }
-
-export async function updateRun(time: number, state: RunState) {
-  return await db
-    .update(schema.currentRun)
-    .set({ time, state })
-    .where(eq(schema.currentRun.id, 1));
-}
-
-export async function createCurrentRun() {
-  const result = await db.insert(schema.currentRun).values({}).returning();
-  return result[0];
-}
-
-export async function deleteCurrentRun() {
-  return await db.delete(schema.currentRun).where(eq(schema.currentRun.id, 1));
-}
-
-async function getLastLocation() {
-  return await db
-    .select()
-    .from(schema.location)
-    .orderBy(desc(schema.currentRun.id))
-    .limit(1);
-}
-
-export async function getDistance() {
-  const result = await db
-    .select({ distance: schema.currentRun.distance })
-    .from(schema.currentRun)
-    .where(eq(schema.currentRun.id, 1));
-  return result.length > 0 ? result[0].distance : 0;
-}
-
-async function updateDistance(distance: number) {
-  const currentRun = await getCurrentRun();
-  const oldDistance = currentRun?.distance ?? 0;
-  return await db
-    .update(schema.currentRun)
-    .set({ distance: oldDistance + distance })
-    .where(eq(schema.currentRun.id, 1));
-}
-
-async function addLocation(location: Location) {
-  return await db.insert(schema.location).values({
-    ...location,
-    currentRunId: 1,
-  });
-}
-
-export async function addLocations(locations: Location[]) {
-  if (locations.length === 0) {
-    return;
+  getDb() {
+    return this.db;
   }
 
-  const lastLocation = await getLastLocation();
-  if (lastLocation.length === 1) {
-    locations = [lastLocation[0], ...locations];
+  async getCurrentRun() {
+    return await this.db.query.currentRun.findFirst();
   }
 
-  const distance = calculateDistanceBetweenLocations(locations);
-  await updateDistance(distance);
+  async getLocations() {
+    return await this.db.query.location.findMany();
+  }
 
-  for (const location of locations) {
-    await addLocation(location);
+  async getCurrentRunWithLocations() {
+    const currentRun = await this.getCurrentRun();
+    if (!currentRun) {
+      return;
+    }
+    const locations = await this.getLocations();
+    return {
+      ...currentRun,
+      path: locations,
+    };
+  }
+
+  async getLastLocation() {
+    return await this.db
+      .select()
+      .from(schema.location)
+      .orderBy(desc(schema.location.id))
+      .limit(1);
+  }
+
+  async getCurrentRunId() {
+    const currentRun = await this.getCurrentRun();
+    return currentRun?.id;
+  }
+
+  async getDistance() {
+    const currentRun = await this.getCurrentRun();
+    return currentRun?.distance ?? 0;
+  }
+
+  async createCurrentRun() {
+    const currentRun = await this.getCurrentRun();
+    if (currentRun) {
+      throw new Error("current run already exists");
+    }
+    const result = await this.db
+      .insert(schema.currentRun)
+      .values({})
+      .returning();
+    return result[0];
+  }
+
+  private async addLocation(location: Location) {
+    return await this.db.insert(schema.location).values(location);
+  }
+
+  async addLocations(locations: Location[]) {
+    if (locations.length === 0) {
+      return;
+    }
+
+    const lastLocation = await this.getLastLocation();
+    const distance = calculateDistanceBetweenLocations(
+      lastLocation.length === 1 ? [lastLocation[0], ...locations] : locations,
+    );
+    await this.updateDistance(distance);
+
+    for (const location of locations) {
+      await this.addLocation(location);
+    }
+  }
+
+  async updateRun(update: Partial<CurrentRun>) {
+    return await this.db.update(schema.currentRun).set(update);
+  }
+
+  private async updateDistance(distance: number) {
+    const oldDistance = await this.getDistance();
+    return await this.db
+      .update(schema.currentRun)
+      .set({ distance: oldDistance + distance });
+  }
+
+  async deleteCurrentRun() {
+    await this.deleteLocations();
+    return await this.db.delete(schema.currentRun);
+  }
+
+  private async deleteLocations() {
+    return await this.db.delete(schema.location);
   }
 }
+
+const dbName = "current_run.db";
+const client: SQLite.SQLiteDatabase = SQLite.openDatabaseSync(dbName);
+const db = drizzle(client, { schema });
+export const currentRunDb = new CurrentRunDatabase(db);
+
+const testDbName = "current_run_test.db";
+const testClient: SQLite.SQLiteDatabase = SQLite.openDatabaseSync(testDbName);
+const testDb = drizzle(testClient, { schema });
+export const currentRunTestDb = new CurrentRunDatabase(testDb);

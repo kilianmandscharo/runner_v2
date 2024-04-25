@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "315f818f-ccbb-43a1-85bf-6d772c38d439",
+  "id": "fce90052-33c3-420d-8b9b-8e613fd03bda",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "currentRun": {
@@ -12,15 +12,14 @@
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "start": {
           "name": "start",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'2024-04-22T19:21:59.348Z'"
+          "notNull": false,
+          "autoincrement": false
         },
         "end": {
           "name": "end",
@@ -35,7 +34,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'Started'"
+          "default": "'Prestart'"
         },
         "time": {
           "name": "time",
@@ -59,11 +58,18 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "currentRunLocation": {
-      "name": "currentRunLocation",
+    "location": {
+      "name": "location",
       "columns": {
         "id": {
           "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "timestamp": {
+          "name": "timestamp",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -96,31 +102,10 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
-        },
-        "current_run_id": {
-          "name": "current_run_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "currentRunLocation_current_run_id_currentRun_id_fk": {
-          "name": "currentRunLocation_current_run_id_currentRun_id_fk",
-          "tableFrom": "currentRunLocation",
-          "tableTo": "currentRun",
-          "columnsFrom": [
-            "current_run_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     }

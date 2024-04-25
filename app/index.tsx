@@ -5,15 +5,28 @@ import PageContainer from "../components/PageContainer";
 
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "../drizzle/migrations";
-import { db } from "../database/currentRunDatabase";
+import { currentRunDb } from "../database/currentRunDatabase";
 
 export const width = Dimensions.get("window").width;
 export const height = Dimensions.get("window").height;
 
 export default function Home() {
-  const { success, error } = useMigrations(db, migrations);
+  const { success, error } = useMigrations(currentRunDb.getDb(), migrations);
 
   const router = useRouter();
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const dir = documentDirectory;
+  //     if (!dir) return;
+  //     const result = await readDirectoryAsync(dir + "SQLite");
+  //     for (const file of result) {
+  //       await deleteAsync(dir + "SQLite" + "/" + file);
+  //     }
+  //     const afterDeletion = await readDirectoryAsync(dir + "SQLite");
+  //     console.log(afterDeletion);
+  //   })();
+  // }, []);
 
   return (
     <PageContainer>
@@ -27,6 +40,7 @@ export default function Home() {
           <>
             <Button onPress={() => router.push("/new")} text="Neu" />
             <Button onPress={() => router.push("/history")} text="Läufe" />
+            <Button onPress={() => router.push("/test")} text="Test" />
           </>
         )}
       </View>
