@@ -1,10 +1,13 @@
-import { Location, Time } from "../types/types";
+import { Time } from "../types/types";
 
 const degToRad = (degrees: number) => {
   return degrees * (Math.PI / 180);
 };
 
-export function calculatePointDistance(p1: Location, p2: Location): number {
+export function calculatePointDistance<T extends { lon: number; lat: number }>(
+  p1: T,
+  p2: T,
+): number {
   const earthRadius = 6371 * 1000;
   const dLat = degToRad(p2.lat - p1.lat);
   const dLon = degToRad(p2.lon - p1.lon);
@@ -17,9 +20,9 @@ export function calculatePointDistance(p1: Location, p2: Location): number {
   return earthRadius * c;
 }
 
-export function calculateDistanceBetweenLocations(
-  locations: Location[],
-): number {
+export function calculateDistanceBetweenLocations<
+  T extends { lon: number; lat: number },
+>(locations: T[]): number {
   let distance = 0;
   for (let i = 0; i < locations.length - 1; i++) {
     distance += calculatePointDistance(locations[i], locations[i + 1]);

@@ -1,7 +1,8 @@
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import { desc } from "drizzle-orm";
 import { calculateDistanceBetweenLocations } from "../utils/utils";
-import { CurrentRun, Location, Schema, location, run } from "./schema";
+import { Schema, location, run } from "./schema";
+import { CurrentRun, Location } from "../types/types";
 
 export class CurrentRunDatabase {
   constructor(private db: ExpoSQLiteDatabase<Schema>) {}

@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import { Circle, G, Svg } from "react-native-svg";
-import { formatTime, getTimeFromSeconds } from "../utils/utils";
-import Button from "./Button";
+import { formatTime, getTimeFromSeconds } from "../../utils/utils";
+import Button from "../Button";
 
 const RADIUS = 130;
 const DIAMETER = RADIUS * 2;
@@ -34,7 +34,7 @@ export default function Clock({
   const time = getTimeFromSeconds(timeInSeconds);
 
   const seconds = time.seconds || 60;
-  const minutes = time.minutes || 60;
+  const minutes = time.minutes;
 
   const offsetSec = CIRCUMFERENCE_SEC - SEGMENT_SEC * seconds;
   const offsetMin = CIRCUMFERENCE_MIN - SEGMENT_MIN * minutes;
@@ -50,7 +50,7 @@ export default function Clock({
           onPress={onStart}
           width={DIAMETER}
           height={DIAMETER}
-          rounded
+          round
           disabled={disabled}
         />
       ) : (

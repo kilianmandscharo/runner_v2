@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { FlatList, View, Text, Pressable } from "react-native";
-import { Run } from "../../types/types";
+import { HistoryRun } from "../../types/types";
 import HistoryItem from "../../components/HistoryItem";
 import PageContainer from "../../components/PageContainer";
 import { isDateGreaterOrEqual, isDateSmallerOrEqual } from "../../utils/utils";
-import DateFilterDialog from "../../components/DateFilterDialog";
+import DateFilterDialog from "../../components/Dialog/DateFilterDialog";
 import { Entypo } from "@expo/vector-icons";
 
 interface Filter {
@@ -13,7 +13,7 @@ interface Filter {
 }
 
 export default function History() {
-  const [runs, setRuns] = useState<Run[]>([]);
+  const [runs, setRuns] = useState<HistoryRun[]>([]);
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<Filter>({
     start: undefined,
@@ -51,7 +51,7 @@ export default function History() {
     }
   };
 
-  const handleExportRun = async (_: Run) => {
+  const handleExportRun = async (_: HistoryRun) => {
     // TODO: Implement parsing and saving to disk correctly
   };
 

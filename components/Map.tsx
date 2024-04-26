@@ -1,9 +1,9 @@
 import MapView, { Polyline } from "react-native-maps";
-import { Run } from "../types/types";
+import { HistoryRunFull } from "../types/types";
 import { PROVIDER_GOOGLE } from "react-native-maps";
 
 interface Props {
-  run: Run | null;
+  run: HistoryRunFull | null;
 }
 
 export default function Map({ run }: Props) {

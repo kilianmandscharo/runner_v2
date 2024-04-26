@@ -1,11 +1,11 @@
 import { Text, View } from "react-native";
-import Clock from "../../components/Clock";
+import Clock from "../../components/Run/Clock";
 import useLocationPermission from "../../hooks/useLocationPermission";
 import PageContainer from "../../components/PageContainer";
 import useRun from "../../hooks/useRun";
 import { RunState } from "../../types/types";
-import LocationPermissionDialog from "../../components/LocationPermissionDialog";
-import RunControl from "../../components/RunControl";
+import LocationPermissionDialog from "../../components/Dialog/LocationPermissionDialog";
+import RunControl from "../../components/Run/RunControl";
 
 export default function NewRun() {
   const {

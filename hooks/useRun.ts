@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import useBackgroundTimer from "./useBackgroundTimer";
 import { RunState } from "../types/types";
-import { CurrentRun } from "../database/schema";
+import { CurrentRun } from "../types/types";
 import {
   startBackgroundLocationTask,
   stopBackgroundLocationTask,
 } from "../task/backgroundLocation";
 import { currentRunDb } from "../database/index";
+import { logError } from "../logger/logger";
 
 export default function useRun(): {
   seconds: number;
@@ -18,7 +19,14 @@ export default function useRun(): {
   reset: () => Promise<void>;
   loading: boolean;
 } {
-  const [run, setRun] = useState<CurrentRun | undefined>(undefined);
+  const [run, setRun] = useState<CurrentRun>({
+    id: -1,
+    start: null,
+    end: null,
+    state: RunState.Prestart,
+    time: -1,
+    distance: -1,
+  });
 
   const databaseSyncTimer = useRef<NodeJS.Timeout>();
   const time = useRef<number>();
@@ -28,7 +36,7 @@ export default function useRun(): {
 
   const { startTimer, stopTimer, resetTimer } = useBackgroundTimer(
     run?.time ?? 0,
-    (time: number) => updateRunTime(time),
+    (time: number) => updateRun({ time }),
     () => incrementRunTime(),
   );
 
@@ -41,10 +49,9 @@ export default function useRun(): {
     })();
   }, []);
 
-  const updateRun = (updatedRun: CurrentRun | undefined) => {
-    setRun(updatedRun);
+  const updateRun = (updatedRun: Partial<CurrentRun>) => {
+    setRun((prev) => ({ ...prev, ...updatedRun }));
     time.current = updatedRun?.time;
-    state.current = updatedRun?.state as RunState;
   };
 
   const incrementRunTime = () => {
@@ -54,24 +61,10 @@ export default function useRun(): {
     setRun((prev) => (prev ? { ...prev, time: prev.time + 1 } : prev));
   };
 
-  const updateRunTime = (newTime: number) => {
-    setRun((prev) => (prev ? { ...prev, time: newTime } : prev));
-    time.current = newTime;
-  };
-
-  const updateRunState = (newState: RunState) => {
-    setRun((prev) => (prev ? { ...prev, state: newState } : prev));
-    state.current = newState;
-  };
-
-  const updateRunDistance = (distance: number) => {
-    setRun((prev) => (prev ? { ...prev, distance } : prev));
-  };
-
   const startDatabaseSync = () => {
     databaseSyncTimer.current = setInterval(async () => {
       const distance = await currentRunDb.getDistance();
-      updateRunDistance(distance);
+      updateRun({ distance });
       if (time.current !== undefined && state.current !== undefined) {
         await currentRunDb.updateRun({
           time: time.current,
@@ -88,35 +81,65 @@ export default function useRun(): {
   };
 
   const start = async () => {
-    await currentRunDb.updateRun({
-      start: new Date().toISOString(),
-      state: RunState.Started,
-    });
-    startTimer();
-    await startBackgroundLocationTask();
-    startDatabaseSync();
-    updateRunState(RunState.Started);
+    try {
+      const startDate = new Date().toISOString();
+      await currentRunDb.updateRun({
+        start: startDate,
+        state: RunState.Started,
+      });
+      await startBackgroundLocationTask();
+      updateRun({
+        start: startDate,
+        state: RunState.Started,
+      });
+      startTimer();
+      startDatabaseSync();
+    } catch (error) {
+      logError(error, "failed to start the run");
+    }
   };
 
   const stop = async () => {
-    stopTimer();
-    await stopBackgroundLocationTask();
-    stopDatabaseSync();
-    updateRunState(RunState.Stopped);
+    try {
+      await currentRunDb.updateRun({
+        state: RunState.Stopped,
+      });
+      await stopBackgroundLocationTask();
+      updateRun({
+        state: RunState.Stopped,
+      });
+      stopTimer();
+      stopDatabaseSync();
+    } catch (error) {
+      logError(error, "failed to stop the run");
+    }
   };
 
   const end = async () => {
-    stopTimer();
-    await stopBackgroundLocationTask();
-    stopDatabaseSync();
-    updateRunState(RunState.Finished);
+    try {
+      await currentRunDb.updateRun({
+        state: RunState.Finished,
+      });
+      await stopBackgroundLocationTask();
+      updateRun({
+        state: RunState.Finished,
+      });
+      stopTimer();
+      stopDatabaseSync();
+    } catch (error) {
+      logError(error, "failed to end the run");
+    }
   };
 
   const reset = async () => {
-    resetTimer();
-    await currentRunDb.deleteCurrentRun();
-    const newRun = await currentRunDb.createCurrentRun();
-    updateRun(newRun);
+    try {
+      await currentRunDb.deleteCurrentRun();
+      const newRun = await currentRunDb.createCurrentRun();
+      updateRun(newRun);
+      resetTimer();
+    } catch (error) {
+      logError(error, "failed to reset the run");
+    }
   };
 
   return {

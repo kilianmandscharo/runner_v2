@@ -45,39 +45,4 @@ describe("useBackgroundTimer", () => {
 
     expect(result.current.seconds).toBe(0);
   });
-
-  // test("should resume the timer when app comes to foreground", () => {
-  //   const { result } = renderHook(() => useBackgroundTimer());
-  //   const { startTimer } = result.current;
-  //
-  //   const appStateMock = jest.spyOn(AppState, "addEventListener");
-  //
-  //   act(() => {
-  //     startTimer();
-  //     jest.advanceTimersByTime(3000); // Advance timers by 3 seconds
-  //     appStateMock.mock.calls[0][1], { app_state: "background" };
-  //     jest.advanceTimersByTime(2000); // Advance timers by additional 2 seconds
-  //     appStateMock.mock.calls[0][1], { app_state: "active" };
-  //   });
-  //
-  //   expect(result.current.seconds).toBe(5);
-  // });
-  //
-  // test("should show the correct time when the timer is stopped and app comes to foreground", () => {
-  //   const { result } = renderHook(() => useBackgroundTimer());
-  //   const { startTimer, stopTimer } = result.current;
-  //
-  //   const appStateMock = jest.spyOn(AppState, "addEventListener");
-  //
-  //   act(() => {
-  //     startTimer();
-  //     jest.advanceTimersByTime(3000); // Advance timers by 3 seconds
-  //     stopTimer();
-  //     appStateMock.mock.calls[0][1], { app_state: "background" };
-  //     jest.advanceTimersByTime(2000); // Advance timers by additional 2 seconds
-  //     appStateMock.mock.calls[0][1], { app_state: "active" };
-  //   });
-  //
-  //   expect(result.current.seconds).toBe(3);
-  // });
 });

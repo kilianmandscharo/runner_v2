@@ -1,4 +1,3 @@
-import { InferSelectModel } from "drizzle-orm";
 import { text, integer, sqliteTable, real } from "drizzle-orm/sqlite-core";
 
 export const location = sqliteTable("currentRunLocation", {
@@ -35,7 +34,3 @@ export const schema = {
 };
 
 export type Schema = typeof schema;
-export type CurrentRun = InferSelectModel<typeof run>;
-export type CurrentRunFull = CurrentRun & { path: Location[] };
-export type HistoryRun = InferSelectModel<typeof history>;
-export type Location = InferSelectModel<typeof location>;

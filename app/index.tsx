@@ -6,12 +6,12 @@ import PageContainer from "../components/PageContainer";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "../drizzle/migrations";
 import { currentRunDb } from "../database/index";
-import { useEffect } from "react";
-import {
-  deleteAsync,
-  documentDirectory,
-  readDirectoryAsync,
-} from "expo-file-system";
+// import { useEffect } from "react";
+// import {
+//   deleteAsync,
+//   documentDirectory,
+//   readDirectoryAsync,
+// } from "expo-file-system";
 
 export const width = Dimensions.get("window").width;
 export const height = Dimensions.get("window").height;

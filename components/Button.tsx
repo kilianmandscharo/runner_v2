@@ -11,7 +11,7 @@ interface Props {
   fontSize?: number;
   text?: string;
   icon?: JSX.Element;
-  rounded?: boolean;
+  round?: boolean;
   variant?: ButtonVariant;
   bg?: ButtonColor;
 }
@@ -25,7 +25,7 @@ export default function Button({
   text,
   icon,
   bg = "primary",
-  rounded,
+  round,
   variant = "primary",
 }: Props) {
   const colorMap: Record<ButtonColor, string> = {
@@ -59,7 +59,7 @@ export default function Button({
           width: width,
           height: height,
           opacity: disabled ? 0.4 : 1,
-          borderRadius: rounded ? width / 2 : 4,
+          borderRadius: round ? width / 2 : 40,
           borderWidth: variant === "primary" ? 0 : 2,
           backgroundColor: getBackgroundColor(),
           borderColor: getBorderColor(),

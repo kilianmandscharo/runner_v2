@@ -3,7 +3,7 @@ import { View, Text, Modal } from "react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import Button from "./Button";
+import Button from "../Button";
 import { useState } from "react";
 import { Entypo } from "@expo/vector-icons";
 

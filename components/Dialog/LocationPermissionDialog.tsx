@@ -1,6 +1,6 @@
 import { startActivityAsync, ActivityAction } from "expo-intent-launcher";
 import Dialog from "./Dialog";
-import Button from "./Button";
+import Button from "../Button";
 
 interface Props {
   permissionGranted: boolean;

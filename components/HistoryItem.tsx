@@ -1,16 +1,16 @@
 import { View, Text } from "react-native";
-import { Run } from "../types/types";
+import { HistoryRun } from "../types/types";
 import Button from "./Button";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
-import Dialog from "./Dialog";
+import Dialog from "./Dialog/Dialog";
 import { useRouter } from "expo-router";
 import dayjs from "dayjs";
 import { formatTime, getTimeFromSeconds } from "../utils/utils";
 
 interface Props {
-  run: Run;
+  run: HistoryRun;
   onDelete: () => void;
   onExport: () => Promise<void>;
 }
