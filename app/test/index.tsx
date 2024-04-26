@@ -1,6 +1,6 @@
 import PageContainer from "../../components/PageContainer";
 import Button from "../../components/Button";
-import { currentRunTestDb } from "../../database/currentRunDatabase";
+import { currentRunTestDb } from "../../database/index";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "../../drizzle/migrations";
 import { Text, View } from "react-native";

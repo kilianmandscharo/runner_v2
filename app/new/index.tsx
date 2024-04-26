@@ -15,7 +15,18 @@ export default function NewRun() {
     onCloseLocationDialog,
   } = useLocationPermission();
 
-  const { seconds, distance, state, start, stop, end, reset } = useRun();
+  const { seconds, distance, state, start, stop, end, reset, loading } =
+    useRun();
+
+  if (loading) {
+    return (
+      <PageContainer>
+        <View className="flex-1 justify-center items-center">
+          <Text className="text-white">Lädt...</Text>
+        </View>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>

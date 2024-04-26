@@ -16,10 +16,15 @@ export default function useRun(): {
   stop: () => Promise<void>;
   end: () => Promise<void>;
   reset: () => Promise<void>;
+  loading: boolean;
 } {
   const [run, setRun] = useState<CurrentRun | undefined>(undefined);
 
   const databaseSyncTimer = useRef<NodeJS.Timeout>();
+  const time = useRef<number>();
+  const state = useRef<RunState>();
+
+  const loading = run === undefined;
 
   const { startTimer, stopTimer, resetTimer } = useBackgroundTimer(
     run?.time ?? 0,
@@ -32,21 +37,31 @@ export default function useRun(): {
       const currentRun =
         (await currentRunDb.getCurrentRun()) ??
         (await currentRunDb.createCurrentRun());
-      setRun(currentRun);
+      updateRun(currentRun);
     })();
-    currentRunDb.getCurrentRun().then(setRun);
   }, []);
 
+  const updateRun = (updatedRun: CurrentRun | undefined) => {
+    setRun(updatedRun);
+    time.current = updatedRun?.time;
+    state.current = updatedRun?.state as RunState;
+  };
+
   const incrementRunTime = () => {
+    if (time.current !== undefined) {
+      time.current = time.current + 1;
+    }
     setRun((prev) => (prev ? { ...prev, time: prev.time + 1 } : prev));
   };
 
-  const updateRunTime = (time: number) => {
-    setRun((prev) => (prev ? { ...prev, time } : prev));
+  const updateRunTime = (newTime: number) => {
+    setRun((prev) => (prev ? { ...prev, time: newTime } : prev));
+    time.current = newTime;
   };
 
-  const updateRunState = (state: RunState) => {
-    setRun((prev) => (prev ? { ...prev, state } : prev));
+  const updateRunState = (newState: RunState) => {
+    setRun((prev) => (prev ? { ...prev, state: newState } : prev));
+    state.current = newState;
   };
 
   const updateRunDistance = (distance: number) => {
@@ -57,10 +72,10 @@ export default function useRun(): {
     databaseSyncTimer.current = setInterval(async () => {
       const distance = await currentRunDb.getDistance();
       updateRunDistance(distance);
-      if (run) {
+      if (time.current !== undefined && state.current !== undefined) {
         await currentRunDb.updateRun({
-          time: run.time,
-          state: run.state as RunState,
+          time: time.current,
+          state: state.current,
         });
       }
     }, 5000);
@@ -100,6 +115,8 @@ export default function useRun(): {
   const reset = async () => {
     resetTimer();
     await currentRunDb.deleteCurrentRun();
+    const newRun = await currentRunDb.createCurrentRun();
+    updateRun(newRun);
   };
 
   return {
@@ -110,5 +127,6 @@ export default function useRun(): {
     stop,
     end,
     reset,
+    loading,
   };
 }

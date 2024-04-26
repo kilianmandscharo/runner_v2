@@ -1,6 +1,6 @@
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import { currentRunDb } from "../database/currentRunDatabase";
+import { currentRunDb } from "../database/index";
 
 const LOCATION_TASK_NAME = "background-location-task";
 

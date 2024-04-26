@@ -65,11 +65,11 @@ export class CurrentRunDatabase {
     return result[0];
   }
 
-  private async addLocation(loc: Location) {
+  private async addLocation(loc: Omit<Location, "id">) {
     return await this.db.insert(location).values(loc);
   }
 
-  async addLocations(locations: Location[]) {
+  async addLocations(locations: Omit<Location, "id">[]) {
     if (locations.length === 0) {
       return;
     }
