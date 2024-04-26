@@ -7,7 +7,6 @@ SystemUI.setBackgroundColorAsync("#1e293b");
 export default function Layout() {
   return (
     <Stack
-      initialRouteName="index"
       screenOptions={{
         headerShown: false,
       }}

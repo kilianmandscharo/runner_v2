@@ -2,13 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Animated, Pressable } from "react-native";
 import LockCircle from "./LockCircle";
 import { FontAwesome } from "@expo/vector-icons";
-
-export const LOCK_CIRCLE_RADIUS = 50;
-export const LOCK_CIRCLE_CIRCUMFERENCE = 2 * Math.PI * LOCK_CIRCLE_RADIUS;
-export const LOCK_CIRCLE_STROKE_WIDTH = 10;
-export const LOCK_HALF_CIRCLE = LOCK_CIRCLE_RADIUS + LOCK_CIRCLE_STROKE_WIDTH;
-export const LOCK_WIDTH = LOCK_CIRCLE_RADIUS * 0.5;
-export const LOCK_HEIGHT = LOCK_CIRCLE_RADIUS * 0.8;
+import { LOCK_CIRCLE_CIRCUMFERENCE } from "./constants";
 
 interface Props {
   onUnlock: () => void;
@@ -22,7 +16,7 @@ export default function Lock({ onUnlock, onLock, disabled, toggle }: Props) {
   const [unlocked, setUnlocked] = useState<boolean>(false);
 
   const animatedFillValue = useRef(
-    new Animated.Value(LOCK_CIRCLE_CIRCUMFERENCE)
+    new Animated.Value(LOCK_CIRCLE_CIRCUMFERENCE),
   ).current;
   const animatedOpacityValue = useRef(new Animated.Value(1)).current;
 
@@ -74,7 +68,7 @@ export default function Lock({ onUnlock, onLock, disabled, toggle }: Props) {
   const animation = (
     animationValue: Animated.Value,
     toValue: number,
-    duration: number
+    duration: number,
   ): Animated.CompositeAnimation => {
     return Animated.timing(animationValue, {
       toValue,

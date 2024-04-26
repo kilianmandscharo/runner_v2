@@ -5,7 +5,7 @@ import {
   LOCK_CIRCLE_STROKE_WIDTH,
   LOCK_CIRCLE_CIRCUMFERENCE,
   LOCK_HALF_CIRCLE,
-} from "./Lock";
+} from "./constants";
 
 interface Props {
   animatedFillValue: Animated.Value;
