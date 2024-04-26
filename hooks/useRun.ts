@@ -6,7 +6,7 @@ import {
   startBackgroundLocationTask,
   stopBackgroundLocationTask,
 } from "../task/backgroundLocation";
-import { currentRunDb } from "../database/currentRunDatabase";
+import { currentRunDb } from "../database/index";
 
 export default function useRun(): {
   seconds: number;

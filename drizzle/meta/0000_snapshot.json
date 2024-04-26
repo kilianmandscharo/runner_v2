@@ -1,11 +1,11 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "fce90052-33c3-420d-8b9b-8e613fd03bda",
+  "id": "31ddc21c-e7b7-427b-af64-c0636320c0ac",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "currentRun": {
-      "name": "currentRun",
+    "history": {
+      "name": "history",
       "columns": {
         "id": {
           "name": "id",
@@ -18,39 +18,36 @@
           "name": "start",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "end": {
           "name": "end",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "state": {
-          "name": "state",
-          "type": "text",
-          "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'Prestart'"
+          "autoincrement": false
         },
         "time": {
           "name": "time",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
         },
         "distance": {
           "name": "distance",
           "type": "real",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
+        },
+        "path": {
+          "name": "path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {},
@@ -58,8 +55,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "location": {
-      "name": "location",
+    "currentRunLocation": {
+      "name": "currentRunLocation",
       "columns": {
         "id": {
           "name": "id",
@@ -102,6 +99,60 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "currentRun": {
+      "name": "currentRun",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "start": {
+          "name": "start",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "end": {
+          "name": "end",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "time": {
+          "name": "time",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "distance": {
+          "name": "distance",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "state": {
+          "name": "state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'Prestart'"
         }
       },
       "indexes": {},

@@ -7,14 +7,6 @@ export interface Run {
   path: Location[];
 }
 
-export interface Location {
-  timestamp: number;
-  lon: number;
-  lat: number;
-  speed: number;
-  altitude: number;
-}
-
 export interface Time {
   hours: number;
   minutes: number;
