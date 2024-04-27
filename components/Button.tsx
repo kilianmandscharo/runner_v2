@@ -54,7 +54,7 @@ export default function Button({
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress} disabled={disabled}>
       <View
-        className="justify-center items-center"
+        className="justify-center items-center flex-row"
         style={{
           width: width,
           height: height,
@@ -63,14 +63,15 @@ export default function Button({
           borderWidth: variant === "primary" ? 0 : 2,
           backgroundColor: getBackgroundColor(),
           borderColor: getBorderColor(),
+          gap: 16,
         }}
       >
+        {icon && icon}
         {text && (
           <Text className="text-white" style={{ fontSize }}>
             {text}
           </Text>
         )}
-        {icon && icon}
       </View>
     </TouchableOpacity>
   );

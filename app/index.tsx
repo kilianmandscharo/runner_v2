@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { View, Dimensions, StatusBar } from "react-native";
 import Button from "../components/Button";
 import { useRouter } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export const width = Dimensions.get("window").width;
 export const height = Dimensions.get("window").height;
@@ -38,8 +40,16 @@ export default function Home() {
         <StatusBar backgroundColor="#1e293b" barStyle="light-content" />
       )}
       <View className="flex-1 justify-center items-center" style={{ gap: 16 }}>
-        <Button onPress={() => router.push("/new")} text="Neu" />
-        <Button onPress={() => router.push("/history")} text="Läufe" />
+        <Button
+          icon={<FontAwesome5 name="walking" size={32} color="white" />}
+          onPress={() => router.push("/new")}
+          text="Neu"
+        />
+        <Button
+          icon={<MaterialIcons name="history" size={32} color="white" />}
+          onPress={() => router.push("/history")}
+          text="Läufe"
+        />
       </View>
     </View>
   );
