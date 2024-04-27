@@ -1,9 +1,13 @@
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
-import { Schema, CurrentRunFull, history, Location } from "./schema";
+import { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+import { Schema, history } from "./schema";
 import { eq } from "drizzle-orm";
+import { CurrentRunFull } from "../types/types";
 
 export class HistoryDatabase {
-  constructor(private db: ExpoSQLiteDatabase<Schema>) {}
+  constructor(
+    private db: ExpoSQLiteDatabase<Schema> | BetterSQLite3Database<Schema>,
+  ) {}
 
   getDb() {
     return this.db;
@@ -23,10 +27,15 @@ export class HistoryDatabase {
     return await this.db.delete(history).where(eq(history.id, id));
   }
 
+  async deleteAll() {
+    return await this.db.delete(history);
+  }
+
   async get(id: number) {
-    return await this.db.query.history.findFirst({
+    const result = await this.db.query.history.findFirst({
       where: (history, { eq }) => eq(history.id, id),
     });
+    return result ? { ...result, path: JSON.parse(result.path) } : undefined;
   }
 
   async getAll() {

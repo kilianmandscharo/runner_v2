@@ -1,26 +1,29 @@
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
+import { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 import { desc } from "drizzle-orm";
-import { calculateDistanceBetweenLocations } from "../utils/utils";
+import { calculatePointDistance } from "../utils/utils";
 import { Schema, location, run } from "./schema";
 import { CurrentRun, Location } from "../types/types";
 
 export class CurrentRunDatabase {
-  constructor(private db: ExpoSQLiteDatabase<Schema>) {}
+  constructor(
+    private db: ExpoSQLiteDatabase<Schema> | BetterSQLite3Database<Schema>,
+  ) {}
 
   getDb() {
     return this.db;
   }
 
-  async getCurrentRun() {
+  async getRun() {
     return await this.db.query.run.findFirst();
   }
 
-  async getLocations() {
+  private async getLocations() {
     return await this.db.query.location.findMany();
   }
 
-  async getCurrentRunWithLocations() {
-    const currentRun = await this.getCurrentRun();
+  async getRunWithLocations() {
+    const currentRun = await this.getRun();
     if (!currentRun) {
       return;
     }
@@ -31,15 +34,16 @@ export class CurrentRunDatabase {
     };
   }
 
-  async getLastLocation() {
-    return await this.db
+  private async getLastLocation() {
+    const result = await this.db
       .select()
       .from(location)
       .orderBy(desc(location.id))
       .limit(1);
+    return result.length > 0 ? result[0] : null;
   }
 
-  async getCurrentRunId() {
+  async getId() {
     const result = await this.db.query.run.findFirst({
       columns: {
         id: true,
@@ -57,8 +61,8 @@ export class CurrentRunDatabase {
     return result?.distance ?? 0;
   }
 
-  async createCurrentRun() {
-    const currentRun = await this.getCurrentRun();
+  async createRun() {
+    const currentRun = await this.getRun();
     if (currentRun) {
       throw new Error("current run already exists");
     }
@@ -66,24 +70,13 @@ export class CurrentRunDatabase {
     return result[0];
   }
 
-  private async addLocation(loc: Omit<Location, "id">) {
-    return await this.db.insert(location).values(loc);
-  }
-
-  async addLocations(locations: Omit<Location, "id">[]) {
-    if (locations.length === 0) {
-      return;
-    }
-
+  async addLocation(newLocation: Omit<Location, "id">) {
     const lastLocation = await this.getLastLocation();
-    const distance = calculateDistanceBetweenLocations(
-      lastLocation.length === 1 ? [lastLocation[0], ...locations] : locations,
-    );
+    const distance = lastLocation
+      ? calculatePointDistance(lastLocation, newLocation)
+      : 0;
     await this.updateDistance(distance);
-
-    for (const location of locations) {
-      await this.addLocation(location);
-    }
+    return await this.db.insert(location).values(newLocation);
   }
 
   async updateRun(update: Partial<CurrentRun>) {
@@ -95,9 +88,13 @@ export class CurrentRunDatabase {
     return await this.db.update(run).set({ distance: oldDistance + distance });
   }
 
-  async deleteCurrentRun() {
-    await this.deleteLocations();
-    return await this.db.delete(run);
+  async deleteRun() {
+    const locationsResult = await this.deleteLocations();
+    const runResult = await this.db.delete(run);
+    return {
+      ...runResult,
+      changes: runResult.changes + locationsResult.changes,
+    };
   }
 
   private async deleteLocations() {

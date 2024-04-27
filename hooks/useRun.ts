@@ -43,8 +43,7 @@ export default function useRun(): {
   useEffect(() => {
     (async () => {
       const currentRun =
-        (await currentRunDb.getCurrentRun()) ??
-        (await currentRunDb.createCurrentRun());
+        (await currentRunDb.getRun()) ?? (await currentRunDb.createRun());
       updateRun(currentRun);
     })();
   }, []);
@@ -133,8 +132,8 @@ export default function useRun(): {
 
   const reset = async () => {
     try {
-      await currentRunDb.deleteCurrentRun();
-      const newRun = await currentRunDb.createCurrentRun();
+      await currentRunDb.deleteRun();
+      const newRun = await currentRunDb.createRun();
       updateRun(newRun);
       resetTimer();
     } catch (error) {

@@ -9,7 +9,6 @@
     "db:generate": "npx drizzle-kit generate:sqlite"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "1.21.0",
     "@react-native-community/datetimepicker": "7.6.1",
     "@types/react": "~18.2.79",
     "babel-plugin-inline-import": "^3.0.0",
@@ -47,7 +46,9 @@
     "@babel/core": "^7.24.4",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@testing-library/react-native": "^12.4.5",
+    "@types/better-sqlite3": "^7.6.10",
     "@types/jest": "^29.5.12",
+    "better-sqlite3": "^9.6.0",
     "drizzle-kit": "^0.20.17"
   },
   "jest": {

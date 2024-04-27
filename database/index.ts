@@ -10,10 +10,3 @@ const db = drizzle(client, { schema });
 
 export const currentRunDb = new CurrentRunDatabase(db);
 export const historyDb = new HistoryDatabase(db);
-
-const testDbName = "run_test.db";
-const testClient: SQLite.SQLiteDatabase = SQLite.openDatabaseSync(testDbName);
-const testDb = drizzle(testClient, { schema });
-
-export const currentRunTestDb = new CurrentRunDatabase(testDb);
-export const historyTestDb = new HistoryDatabase(testDb);

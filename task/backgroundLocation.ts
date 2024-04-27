@@ -12,16 +12,17 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
     return;
   }
   const locations = (data as any).locations as Location.LocationObject[];
-  await currentRunDb.addLocations(
-    locations.map((l) => ({
-      timestamp: l.timestamp,
-      lon: l.coords.longitude,
-      lat: l.coords.latitude,
-      speed: l.coords.speed ?? 0,
-      altitude: l.coords.altitude ?? 0,
-    })),
-  );
-  console.log(`[INFO] Added ${locations.length} locations`);
+  if (locations.length > 0) {
+    const loc = locations[0];
+    await currentRunDb.addLocation({
+      timestamp: loc.timestamp,
+      lon: loc.coords.longitude,
+      lat: loc.coords.latitude,
+      speed: loc.coords.speed ?? 0,
+      altitude: loc.coords.altitude ?? 0,
+    });
+  }
+  console.log(`[INFO] Added ${locations}`);
 });
 
 export async function startBackgroundLocationTask() {
