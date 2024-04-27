@@ -22,8 +22,5 @@
     "android": {
       "package": "com.kilianmandscharo.runner_v2"
     }
-  },
-  "android": {
-    "package": "com.kilianmandscharo.runner_v2"
   }
 }
