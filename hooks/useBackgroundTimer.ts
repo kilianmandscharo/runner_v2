@@ -2,8 +2,6 @@ import { useEffect, useRef } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { AppState, AppStateStatus } from "react-native";
 
-console.log(AppState);
-
 export default function useBackgroundTimer(
   seconds: number,
   onSecondsChange: (seconds: number) => void,

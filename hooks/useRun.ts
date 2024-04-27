@@ -28,9 +28,10 @@ export default function useRun(): {
     distance: -1,
   });
 
+  console.log(run);
+
   const databaseSyncTimer = useRef<NodeJS.Timeout>();
-  const time = useRef<number>();
-  const state = useRef<RunState>();
+  const time = useRef<number>(0);
 
   const loading = run === undefined;
 
@@ -50,13 +51,13 @@ export default function useRun(): {
 
   const updateRun = (updatedRun: Partial<CurrentRun>) => {
     setRun((prev) => ({ ...prev, ...updatedRun }));
-    time.current = updatedRun?.time;
+    if (updatedRun.time) {
+      time.current = updatedRun.time;
+    }
   };
 
   const incrementRunTime = () => {
-    if (time.current !== undefined) {
-      time.current = time.current + 1;
-    }
+    time.current = time.current + 1;
     setRun((prev) => (prev ? { ...prev, time: prev.time + 1 } : prev));
   };
 
@@ -64,10 +65,9 @@ export default function useRun(): {
     databaseSyncTimer.current = setInterval(async () => {
       const distance = await currentRunDb.getDistance();
       updateRun({ distance });
-      if (time.current !== undefined && state.current !== undefined) {
+      if (time.current !== undefined) {
         await currentRunDb.updateRun({
           time: time.current,
-          state: state.current,
         });
       }
     }, 5000);
@@ -94,7 +94,7 @@ export default function useRun(): {
       startTimer();
       startDatabaseSync();
     } catch (error) {
-      logError(error, "failed to start the run");
+      logError("failed to start the run", error);
     }
   };
 
@@ -110,23 +110,26 @@ export default function useRun(): {
       stopTimer();
       stopDatabaseSync();
     } catch (error) {
-      logError(error, "failed to stop the run");
+      logError("failed to stop the run", error);
     }
   };
 
   const end = async () => {
     try {
+      const endDate = new Date().toISOString();
       await currentRunDb.updateRun({
         state: RunState.Finished,
+        end: endDate,
       });
       await stopBackgroundLocationTask();
       updateRun({
         state: RunState.Finished,
+        end: endDate,
       });
       stopTimer();
       stopDatabaseSync();
     } catch (error) {
-      logError(error, "failed to end the run");
+      logError("failed to end the run", error);
     }
   };
 
@@ -137,7 +140,7 @@ export default function useRun(): {
       updateRun(newRun);
       resetTimer();
     } catch (error) {
-      logError(error, "failed to reset the run");
+      logError("failed to reset the run", error);
     }
   };
 

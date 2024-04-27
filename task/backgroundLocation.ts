@@ -1,6 +1,7 @@
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { currentRunDb } from "../database/index";
+import { logDebug, logInfo } from "../logger/logger";
 
 const LOCATION_TASK_NAME = "background-location-task";
 
@@ -21,8 +22,8 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
       speed: loc.coords.speed ?? 0,
       altitude: loc.coords.altitude ?? 0,
     });
+    logDebug(`Added location to database`);
   }
-  console.log(`[INFO] Added ${locations}`);
 });
 
 export async function startBackgroundLocationTask() {
@@ -31,7 +32,7 @@ export async function startBackgroundLocationTask() {
     timeInterval: 5,
     distanceInterval: 0,
   });
-  console.log("[INFO] Background location started");
+  logInfo("Background location started");
 }
 
 export async function stopBackgroundLocationTask() {
@@ -39,6 +40,6 @@ export async function stopBackgroundLocationTask() {
     await TaskManager.isTaskRegisteredAsync(LOCATION_TASK_NAME);
   if (registered) {
     await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
-    console.log("[INFO] Background location stopped");
+    logInfo("Background location stopped");
   }
 }
