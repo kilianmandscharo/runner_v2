@@ -108,27 +108,31 @@ describe("CurrentRunDatabase tests", () => {
     });
   });
 
-  describe("addLocation tests", () => {
+  describe("addLocations tests", () => {
     it("should add the locations", async () => {
-      let result = await testDb.addLocation({
-        timestamp: new Date().getMilliseconds(),
-        lon: 20,
-        lat: 20,
-        speed: 10,
-        altitude: 500,
-      });
+      let result = await testDb.addLocations([
+        {
+          timestamp: new Date().getMilliseconds(),
+          lon: 20,
+          lat: 20,
+          speed: 10,
+          altitude: 500,
+        },
+      ]);
 
-      expect(result).toEqual({ changes: 1, lastInsertRowid: 1 });
+      expect(result).toBe(1);
 
-      result = await testDb.addLocation({
-        timestamp: new Date().getMilliseconds(),
-        lon: 20,
-        lat: 20,
-        speed: 10,
-        altitude: 500,
-      });
+      result = await testDb.addLocations([
+        {
+          timestamp: new Date().getMilliseconds(),
+          lon: 20,
+          lat: 20,
+          speed: 10,
+          altitude: 500,
+        },
+      ]);
 
-      expect(result).toEqual({ changes: 1, lastInsertRowid: 2 });
+      expect(result).toBe(1);
     });
   });
 
@@ -141,13 +145,15 @@ describe("CurrentRunDatabase tests", () => {
 
     it("should return the run with locations", async () => {
       await testDb.createRun();
-      await testDb.addLocation({
-        timestamp: 100000000,
-        lon: 20,
-        lat: 20,
-        speed: 10,
-        altitude: 500,
-      });
+      await testDb.addLocations([
+        {
+          timestamp: 100000000,
+          lon: 20,
+          lat: 20,
+          speed: 10,
+          altitude: 500,
+        },
+      ]);
 
       const result = await testDb.getRunWithLocations();
 
@@ -181,13 +187,15 @@ describe("CurrentRunDatabase tests", () => {
 
     it("should return the run with locations", async () => {
       await testDb.createRun();
-      await testDb.addLocation({
-        timestamp: 100000000,
-        lon: 20,
-        lat: 20,
-        speed: 10,
-        altitude: 500,
-      });
+      await testDb.addLocations([
+        {
+          timestamp: 100000000,
+          lon: 20,
+          lat: 20,
+          speed: 10,
+          altitude: 500,
+        },
+      ]);
 
       const result = await testDb.getRunWithLocations();
 
@@ -221,13 +229,15 @@ describe("CurrentRunDatabase tests", () => {
 
     it("should delete the current run and all locations", async () => {
       await testDb.createRun();
-      await testDb.addLocation({
-        timestamp: 100000000,
-        lon: 20,
-        lat: 20,
-        speed: 10,
-        altitude: 500,
-      });
+      await testDb.addLocations([
+        {
+          timestamp: 100000000,
+          lon: 20,
+          lat: 20,
+          speed: 10,
+          altitude: 500,
+        },
+      ]);
 
       const result = await testDb.deleteRun();
 

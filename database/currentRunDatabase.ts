@@ -1,7 +1,10 @@
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
 import { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 import { desc } from "drizzle-orm";
-import { calculatePointDistance } from "../utils/utils";
+import {
+  calculateDistanceBetweenLocations,
+  calculatePointDistance,
+} from "../utils/utils";
 import { Schema, location, run } from "./schema";
 import { CurrentRun, Location } from "../types/types";
 
@@ -70,13 +73,27 @@ export class CurrentRunDatabase {
     return result[0];
   }
 
-  async addLocation(newLocation: Omit<Location, "id">) {
+  private async addLocation(loc: Omit<Location, "id">) {
+    return await this.db.insert(location).values(loc);
+  }
+
+  async addLocations(locations: Omit<Location, "id">[]): Promise<number> {
     const lastLocation = await this.getLastLocation();
+
     const distance = lastLocation
-      ? calculatePointDistance(lastLocation, newLocation)
-      : 0;
+      ? calculateDistanceBetweenLocations([lastLocation, ...locations])
+      : calculateDistanceBetweenLocations(locations);
+
     await this.updateDistance(distance);
-    return await this.db.insert(location).values(newLocation);
+
+    let counter = 0;
+
+    for (const loc of locations) {
+      await this.addLocation(loc);
+      counter++;
+    }
+
+    return counter;
   }
 
   async updateRun(update: Partial<CurrentRun>) {

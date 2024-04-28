@@ -22,8 +22,8 @@
     "android": {
       "package": "com.kilianmandscharo.runner_v2",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/runner_v2.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#0284C7"
       },
       "config": {
         "googleMaps": {
