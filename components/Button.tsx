@@ -1,6 +1,6 @@
 import { Text, View, TouchableOpacity } from "react-native";
 
-type ButtonVariant = "primary" | "secondary";
+type ButtonVariant = "primary" | "secondary" | "ghost";
 type ButtonColor = "primary" | "danger";
 
 interface Props {
@@ -39,6 +39,8 @@ export default function Button({
         return colorMap[bg];
       case "secondary":
         return "transparent";
+      case "ghost":
+        return "transparent";
     }
   };
 
@@ -48,6 +50,8 @@ export default function Button({
         return "transparent";
       case "secondary":
         return colorMap[bg];
+      case "ghost":
+        return "transparent";
     }
   };
 

@@ -1,18 +1,18 @@
 import { View, Text } from "react-native";
-import { HistoryRun } from "../types/types";
-import Button from "./Button";
+import { HistoryRunPartial } from "../../types/types";
+import Button from "../Button";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
-import Dialog from "./Dialog/Dialog";
+import Dialog from "../Dialog/Dialog";
 import { useRouter } from "expo-router";
 import dayjs from "dayjs";
-import { formatTime, getTimeFromSeconds } from "../utils/utils";
+import { formatTime, getTimeFromSeconds } from "../../utils/utils";
 
 interface Props {
-  run: HistoryRun;
+  run: HistoryRunPartial;
   onDelete: () => void;
-  onExport: () => Promise<void>;
+  onExport: () => void;
 }
 
 export default function HistoryItem({ run, onDelete, onExport }: Props) {

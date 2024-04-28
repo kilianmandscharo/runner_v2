@@ -20,7 +20,16 @@
       }
     },
     "android": {
-      "package": "com.kilianmandscharo.runner_v2"
+      "package": "com.kilianmandscharo.runner_v2",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/runner_v2.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBVq9tOKZQAIfnzY_yULg8u2MPN1QlDcAM"
+        }
+      }
     }
   }
 }

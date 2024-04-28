@@ -1,11 +1,13 @@
-import { useMemo, useState } from "react";
-import { FlatList, View, Text, Pressable } from "react-native";
-import { HistoryRun } from "../../types/types";
-import HistoryItem from "../../components/HistoryItem";
+import { useEffect, useMemo, useState } from "react";
+import { HistoryRunPartial } from "../../types/types";
 import PageContainer from "../../components/PageContainer";
 import { isDateGreaterOrEqual, isDateSmallerOrEqual } from "../../utils/utils";
-import DateFilterDialog from "../../components/Dialog/DateFilterDialog";
-import { Entypo } from "@expo/vector-icons";
+import FullPageInfo from "../../components/FullPageInfo";
+import { historyDb } from "../../database";
+import { logError } from "../../logger/logger";
+import HistoryList from "../../components/History/HistoryList";
+import DateFilter from "../../components/History/DateFilter";
+import HistoryHeader from "../../components/History/HistoryHeader";
 
 interface Filter {
   start: Date | undefined;
@@ -13,7 +15,7 @@ interface Filter {
 }
 
 export default function History() {
-  const [runs, setRuns] = useState<HistoryRun[]>([]);
+  const [runs, setRuns] = useState<HistoryRunPartial[]>([]);
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<Filter>({
     start: undefined,
@@ -30,29 +32,25 @@ export default function History() {
     [dateFilter, runs],
   );
 
-  // useEffect(() => {
-  //   db.getAllRuns()
-  //     .then((runs) => setRuns(runs))
-  //     .catch((err) => {
-  //       if (err instanceof Error) {
-  //         throw err;
-  //       }
-  //     });
-  // }, []);
+  useEffect(() => {
+    historyDb
+      .getAll()
+      .then(setRuns)
+      .catch((err) => logError("failed to fetch history items", err));
+  }, []);
 
   const handleDeleteItem = async (id: number) => {
     try {
-      // await db.deleteRun(id);
+      await historyDb.delete(id);
       setRuns(runs.filter((r) => r.id !== id));
     } catch (err) {
-      if (err instanceof Error) {
-        throw err;
-      }
+      logError("failed to delete history item", err);
     }
   };
 
-  const handleExportRun = async (_: HistoryRun) => {
+  const handleExportItem = async (id: number) => {
     // TODO: Implement parsing and saving to disk correctly
+    console.log(id);
   };
 
   const handleStartChange = (date: Date | undefined) => {
@@ -64,9 +62,6 @@ export default function History() {
   };
 
   const getDateRange = (): { start: Date; end: Date } => {
-    // Pass down the current filter date if it exists, else the boundaries of
-    // the runs; in case there is one run or less pass the current date
-
     let start: Date;
     if (dateFilter.start !== undefined) {
       start = dateFilter.start;
@@ -87,57 +82,47 @@ export default function History() {
     };
   };
 
+  const handleFilterClose = () => {
+    setFilterOpen(false);
+  };
+
+  const handleFilterOpen = () => {
+    setFilterOpen(true);
+  };
+
+  const handleFilterReset = () => {
+    setDateFilter({ start: undefined, end: undefined });
+  };
+
+  if (runs.length === 0) {
+    return <FullPageInfo text="Keine gespeicherten Einträge" />;
+  }
+
   const filterActive =
     dateFilter.start !== undefined || dateFilter.end !== undefined;
 
   return (
     <PageContainer>
-      {runs.length === 0 ? (
-        <View>
-          <Text className="text-white">Keine Läufe</Text>
-        </View>
-      ) : (
-        <>
-          <View className="mb-4 flex flex-row justify-between">
-            <Text className="text-orange-400 text-lg">
-              {filteredRuns.length} Einträge
-            </Text>
-            <View style={{ gap: 8 }} className="flex flex-row items-center">
-              {filterActive && (
-                <Pressable
-                  onPress={() =>
-                    setDateFilter({ start: undefined, end: undefined })
-                  }
-                >
-                  <Entypo name="cross" size={24} color="white" />
-                </Pressable>
-              )}
-              <Pressable onPress={() => setFilterOpen(true)}>
-                <Text className="text-white text-lg">Filter</Text>
-              </Pressable>
-            </View>
-          </View>
-          <FlatList
-            data={filteredRuns}
-            renderItem={({ item: r }) => (
-              <HistoryItem
-                key={r.id}
-                run={r}
-                onDelete={() => handleDeleteItem(r.id)}
-                onExport={() => handleExportRun(r)}
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-          />
-          <DateFilterDialog
-            open={filterOpen}
-            onClose={() => setFilterOpen(false)}
-            {...getDateRange()}
-            onStartChange={handleStartChange}
-            onEndChange={handleEndChange}
-          />
-        </>
+      <HistoryHeader
+        nRuns={filteredRuns.length}
+        filterOpen={filterOpen}
+        filterActive={filterActive}
+        onFilterOpen={handleFilterOpen}
+        onFilterClose={handleFilterClose}
+        onFilderReset={handleFilterReset}
+      />
+      {filterOpen && (
+        <DateFilter
+          {...getDateRange()}
+          onStartChange={handleStartChange}
+          onEndChange={handleEndChange}
+        />
       )}
+      <HistoryList
+        filteredRuns={filteredRuns}
+        onDeleteItem={handleDeleteItem}
+        onExportItem={handleExportItem}
+      />
     </PageContainer>
   );
 }

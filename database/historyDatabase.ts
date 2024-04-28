@@ -32,6 +32,15 @@ export class HistoryDatabase {
   }
 
   async get(id: number) {
+    return await this.db.query.history.findFirst({
+      where: (history, { eq }) => eq(history.id, id),
+      columns: {
+        path: false,
+      },
+    });
+  }
+
+  async getFull(id: number) {
     const result = await this.db.query.history.findFirst({
       where: (history, { eq }) => eq(history.id, id),
     });
@@ -39,6 +48,10 @@ export class HistoryDatabase {
   }
 
   async getAll() {
+    return await this.db.query.history.findMany({ columns: { path: false } });
+  }
+
+  async getAllFull() {
     const rows = await this.db.query.history.findMany();
     return rows.map((item) => ({
       ...item,

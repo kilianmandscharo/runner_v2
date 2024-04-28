@@ -75,6 +75,45 @@ describe("HistoryDatabase tests", () => {
         end: "2024-04-27T11:06:29.224Z",
         time: 3600,
         distance: 10000,
+      });
+    });
+  });
+
+  describe("getFull tests", () => {
+    it("should return undefined if there is no item with the id", async () => {
+      const result = await testDb.getFull(1);
+
+      expect(result).toBe(undefined);
+    });
+
+    it("should return the full history item", async () => {
+      await testDb.create({
+        id: 1,
+        start: "2024-04-27T11:06:29.224Z",
+        end: "2024-04-27T11:06:29.224Z",
+        time: 3600,
+        distance: 10000,
+        state: RunState.Finished,
+        path: [
+          {
+            id: 1,
+            timestamp: 1000,
+            lon: 20,
+            lat: 20,
+            speed: 20,
+            altitude: 500,
+          },
+        ],
+      });
+
+      const result = await testDb.getFull(1);
+
+      expect(result).toEqual({
+        id: 1,
+        start: "2024-04-27T11:06:29.224Z",
+        end: "2024-04-27T11:06:29.224Z",
+        time: 3600,
+        distance: 10000,
         path: [
           {
             id: 1,
@@ -117,6 +156,47 @@ describe("HistoryDatabase tests", () => {
       });
 
       const result = await testDb.getAll();
+
+      expect(result).toEqual([
+        {
+          id: 1,
+          start: "2024-04-27T11:06:29.224Z",
+          end: "2024-04-27T11:06:29.224Z",
+          time: 3600,
+          distance: 10000,
+        },
+      ]);
+    });
+  });
+
+  describe("getAllFull tests", () => {
+    it("should return and empty array if there is no item", async () => {
+      const result = await testDb.getAllFull();
+
+      expect(result).toEqual([]);
+    });
+
+    it("should return the full history item in an array", async () => {
+      await testDb.create({
+        id: 1,
+        start: "2024-04-27T11:06:29.224Z",
+        end: "2024-04-27T11:06:29.224Z",
+        time: 3600,
+        distance: 10000,
+        state: RunState.Finished,
+        path: [
+          {
+            id: 1,
+            timestamp: 1000,
+            lon: 20,
+            lat: 20,
+            speed: 20,
+            altitude: 500,
+          },
+        ],
+      });
+
+      const result = await testDb.getAllFull();
 
       expect(result).toEqual([
         {

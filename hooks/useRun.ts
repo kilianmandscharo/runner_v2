@@ -7,6 +7,7 @@ import {
   stopBackgroundLocationTask,
 } from "../task/backgroundLocation";
 import { currentRunDb } from "../database/index";
+import { historyDb } from "../database/index";
 import { logError } from "../logger/logger";
 
 export default function useRun(): {
@@ -27,8 +28,6 @@ export default function useRun(): {
     time: -1,
     distance: -1,
   });
-
-  console.log(run);
 
   const databaseSyncTimer = useRef<NodeJS.Timeout>();
   const time = useRef<number>(0);
@@ -128,6 +127,7 @@ export default function useRun(): {
       });
       stopTimer();
       stopDatabaseSync();
+      await saveRun();
     } catch (error) {
       logError("failed to end the run", error);
     }
@@ -142,6 +142,14 @@ export default function useRun(): {
     } catch (error) {
       logError("failed to reset the run", error);
     }
+  };
+
+  const saveRun = async () => {
+    const fullRun = await currentRunDb.getRunWithLocations();
+    if (!fullRun) {
+      throw new Error("current run not found");
+    }
+    await historyDb.create(fullRun);
   };
 
   return {

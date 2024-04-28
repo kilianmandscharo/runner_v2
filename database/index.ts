@@ -1,4 +1,4 @@
-import * as SQLite from "expo-sqlite";
+import * as SQLite from "expo-sqlite/next";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { CurrentRunDatabase } from "./currentRunDatabase";
 import { schema } from "./schema";

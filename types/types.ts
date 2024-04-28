@@ -17,7 +17,8 @@ export enum RunState {
 export type CurrentRun = InferSelectModel<typeof run>;
 export type CurrentRunFull = CurrentRun & { path: Location[] };
 export type HistoryRun = InferSelectModel<typeof history>;
-export type HistoryRunFull = InferSelectModel<typeof history> & {
+export type HistoryRunFull = Omit<HistoryRun, "path"> & {
   path: Location[];
 };
+export type HistoryRunPartial = Omit<HistoryRunFull, "path">;
 export type Location = InferSelectModel<typeof location>;
