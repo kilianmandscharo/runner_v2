@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Map from "../../components/History/Map";
-import PageContainer from "../../components/PageContainer";
 import { useLocalSearchParams } from "expo-router";
 import { HistoryRunFull } from "../../types/types";
 import { historyDb } from "../../database";
@@ -26,9 +25,5 @@ export default function ShowRun() {
     return <FullPageInfo text="Kein Pfad vorhanden" />;
   }
 
-  return (
-    <PageContainer>
-      <Map run={run} />
-    </PageContainer>
-  );
+  return <Map run={run} />;
 }

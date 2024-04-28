@@ -6,6 +6,7 @@ import {
   LOCK_CIRCLE_CIRCUMFERENCE,
   LOCK_HALF_CIRCLE,
 } from "./constants";
+import { colors } from "../../assets/colors";
 
 interface Props {
   animatedFillValue: Animated.Value;
@@ -25,7 +26,7 @@ export default function LockCircle({ animatedFillValue }: Props) {
         <Circle
           cx="50%"
           cy="50%"
-          stroke="teal"
+          stroke={colors.sky["500"]}
           strokeWidth={LOCK_CIRCLE_STROKE_WIDTH}
           r={LOCK_CIRCLE_RADIUS}
           strokeOpacity={0.5}

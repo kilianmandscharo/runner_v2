@@ -6,6 +6,7 @@ import DateTimePicker, {
 import Button from "../Button";
 import { useState } from "react";
 import { Entypo } from "@expo/vector-icons";
+import Divider from "../Divider";
 
 interface Props {
   start: Date;
@@ -50,7 +51,7 @@ export default function DateFilter({
 
   return (
     <View
-      className="justify-between items-center bg-slate-700 mb-8 p-3 rounded"
+      className="justify-between items-center bg-slate-700 mb-8 py-3 rounded border-2 border-sky-100"
       style={{ gap: 12 }}
     >
       <FilterItem label="Von" value={start} onPress={handleShowStart} />
@@ -71,10 +72,10 @@ interface FilterItemProps {
 
 function FilterItem({ label, value, onPress }: FilterItemProps) {
   return (
-    <View className="w-full flex flex-row items-center justify-between">
+    <View className="w-full flex flex-row items-center justify-between px-4">
       <View>
         <Text className="text-sm text-white">{label}:</Text>
-        <Text className="text-lg text-white">
+        <Text className="text-lg text-sky-200">
           {dayjs(value).format("DD.MM.YYYY")}
         </Text>
       </View>
@@ -82,7 +83,7 @@ function FilterItem({ label, value, onPress }: FilterItemProps) {
         onPress={onPress}
         width={32}
         height={32}
-        icon={<Entypo name="edit" size={20} color="white" />}
+        icon={<Entypo name="edit" size={16} color="white" />}
       />
     </View>
   );

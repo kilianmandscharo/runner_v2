@@ -5,6 +5,8 @@ import { HistoryRunPartial } from "../../types/types";
 interface Props {
   onDeleteItem: (id: number) => void;
   onExportItem: (id: number) => void;
+  onShowMap: (id: number) => void;
+  onShowStats: (id: number) => void;
   filteredRuns: HistoryRunPartial[];
 }
 
@@ -12,6 +14,8 @@ export default function HistoryList({
   filteredRuns,
   onDeleteItem,
   onExportItem,
+  onShowMap,
+  onShowStats,
 }: Props) {
   return (
     <FlatList
@@ -22,6 +26,8 @@ export default function HistoryList({
           run={r}
           onDelete={() => onDeleteItem(r.id)}
           onExport={() => onExportItem(r.id)}
+          onShowMap={() => onShowMap(r.id)}
+          onShowStats={() => onShowStats(r.id)}
         />
       )}
       keyExtractor={(item) => item.id.toString()}

@@ -1,4 +1,5 @@
 import { Text, View, TouchableOpacity } from "react-native";
+import { colors } from "../assets/colors";
 
 type ButtonVariant = "primary" | "secondary" | "ghost";
 type ButtonColor = "primary" | "danger";
@@ -29,8 +30,8 @@ export default function Button({
   variant = "primary",
 }: Props) {
   const colorMap: Record<ButtonColor, string> = {
-    primary: "#0d9488",
-    danger: "#ef4444",
+    primary: colors.sky["500"],
+    danger: colors.red["500"],
   };
 
   const getBackgroundColor = () => {

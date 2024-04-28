@@ -4,6 +4,7 @@ import Button from "../components/Button";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { colors } from "../assets/colors";
 
 export const width = Dimensions.get("window").width;
 export const height = Dimensions.get("window").height;
@@ -37,7 +38,7 @@ export default function Home() {
       style={{ marginTop: StatusBar.currentHeight }}
     >
       {showStatusBar && (
-        <StatusBar backgroundColor="#1e293b" barStyle="light-content" />
+        <StatusBar backgroundColor={colors.slate["800"]} barStyle="light-content" />
       )}
       <View className="flex-1 justify-center items-center" style={{ gap: 16 }}>
         <Button

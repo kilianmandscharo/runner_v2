@@ -8,6 +8,7 @@ import { logError } from "../../logger/logger";
 import HistoryList from "../../components/History/HistoryList";
 import DateFilter from "../../components/History/DateFilter";
 import HistoryHeader from "../../components/History/HistoryHeader";
+import { useRouter } from "expo-router";
 
 interface Filter {
   start: Date | undefined;
@@ -15,6 +16,8 @@ interface Filter {
 }
 
 export default function History() {
+  const router = useRouter();
+
   const [runs, setRuns] = useState<HistoryRunPartial[]>([]);
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<Filter>({
@@ -50,6 +53,15 @@ export default function History() {
 
   const handleExportItem = async (id: number) => {
     // TODO: Implement parsing and saving to disk correctly
+    console.log(id);
+  };
+
+  const handleShowMap = (id: number) => {
+    router.push(`/show/${id}`);
+  };
+
+  const handleShowStats = (id: number) => {
+    // TODO: Implement showing stats
     console.log(id);
   };
 
@@ -122,6 +134,8 @@ export default function History() {
         filteredRuns={filteredRuns}
         onDeleteItem={handleDeleteItem}
         onExportItem={handleExportItem}
+        onShowMap={handleShowMap}
+        onShowStats={handleShowStats}
       />
     </PageContainer>
   );

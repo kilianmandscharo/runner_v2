@@ -21,7 +21,9 @@ export default function HistoryHeader({
 }: Props) {
   return (
     <View className="mb-8 flex flex-row justify-between items-center">
-      <Text className="text-teal-400 text-lg">{nRuns} Einträge</Text>
+      <Text className="text-sky-300 text-lg">
+        {nRuns} {nRuns === 1 ? "Eintrag" : "Einträge"}
+      </Text>
       <View className="flex-row" style={{ gap: 8 }}>
         {filterOpen && filterActive && (
           <Button
@@ -37,9 +39,8 @@ export default function HistoryHeader({
           text="Filter"
           fontSize={18}
           height={38}
-          width={100}
+          width={108}
           onPress={filterOpen ? onFilterClose : onFilterOpen}
-          variant="secondary"
           icon={
             filterOpen ? (
               <FontAwesome name="eye-slash" size={20} color="white" />

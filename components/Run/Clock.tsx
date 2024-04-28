@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import { Circle, G, Svg } from "react-native-svg";
 import { formatTime, getTimeFromSeconds } from "../../utils/utils";
 import Button from "../Button";
+import { colors } from "../../assets/colors";
 
 const RADIUS = 130;
 const DIAMETER = RADIUS * 2;
@@ -9,8 +10,8 @@ const STROKE_WIDTH = 16;
 const HALF_CIRCLE = RADIUS + STROKE_WIDTH;
 
 const STROKE_WIDTH_INNER = 8;
-const RADIUS_SEC = RADIUS - STROKE_WIDTH_INNER / 2;
-const RADIUS_MIN = RADIUS + STROKE_WIDTH_INNER / 2;
+const RADIUS_SEC = RADIUS + STROKE_WIDTH_INNER / 2;
+const RADIUS_MIN = RADIUS - STROKE_WIDTH_INNER / 2;
 
 const CIRCUMFERENCE_SEC = 2 * Math.PI * RADIUS_SEC;
 const CIRCUMFERENCE_MIN = 2 * Math.PI * RADIUS_MIN;
@@ -65,7 +66,7 @@ export default function Clock({
               <Circle
                 cx="50%"
                 cy="50%"
-                stroke="#e2e8f0"
+                stroke="white"
                 strokeWidth={STROKE_WIDTH}
                 r={RADIUS}
                 fill="black"
@@ -73,22 +74,24 @@ export default function Clock({
               <Circle
                 cx="50%"
                 cy="50%"
-                stroke="orange"
+                stroke={colors.amber["400"]}
                 strokeWidth={STROKE_WIDTH_INNER}
                 r={RADIUS_MIN}
                 strokeDasharray={CIRCUMFERENCE_MIN}
                 strokeDashoffset={offsetMin}
                 fill="none"
+                strokeLinecap="round"
               />
               <Circle
                 cx="50%"
                 cy="50%"
-                stroke="violet"
+                stroke={colors.purple["400"]}
                 strokeWidth={STROKE_WIDTH_INNER}
                 r={RADIUS_SEC}
                 strokeDasharray={CIRCUMFERENCE_SEC}
                 strokeDashoffset={offsetSec}
                 fill="none"
+                strokeLinecap="round"
               />
             </G>
           </Svg>
