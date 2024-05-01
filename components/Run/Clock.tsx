@@ -34,7 +34,7 @@ export default function Clock({
 }: Props) {
   const time = getTimeFromSeconds(timeInSeconds);
 
-  const seconds = time.seconds || 60;
+  const seconds = timeInSeconds === 0 ? 0 : time.seconds || 60;
   const minutes = time.minutes;
 
   const offsetSec = CIRCUMFERENCE_SEC - SEGMENT_SEC * seconds;

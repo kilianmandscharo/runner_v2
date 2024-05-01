@@ -7,6 +7,7 @@ import { RunState } from "../../types/types";
 import LocationPermissionDialog from "../../components/Dialog/LocationPermissionDialog";
 import RunControl from "../../components/Run/RunControl";
 import FullPageInfo from "../../components/FullPageInfo";
+import BackButton from "../../components/BackButton";
 
 export default function NewRun() {
   const {
@@ -25,6 +26,9 @@ export default function NewRun() {
 
   return (
     <PageContainer>
+      <View className="absolute top-2 left-2">
+        <BackButton />
+      </View>
       <View className="flex-1 justify-center items-center">
         <Clock
           timeInSeconds={seconds}
@@ -34,7 +38,7 @@ export default function NewRun() {
         />
         <View className="justify-center items-center p-6 rounded-md bg-slate-700 shadow-xl w-11/12">
           <Text className="text-3xl text-white">
-            Distanz: {(Math.floor(distance) / 1000).toFixed(2)} km
+            {(Math.floor(distance) / 1000).toFixed(2)} km
           </Text>
         </View>
         <RunControl

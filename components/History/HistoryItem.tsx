@@ -8,6 +8,7 @@ import { formatTime, getTimeFromSeconds } from "../../utils/utils";
 import Divider from "../Divider";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { colors } from "../../assets/colors";
 import HistoryItemControls from "./HistoryItemControls";
 
@@ -61,11 +62,18 @@ export default function HistoryItem({
           </View>
         </View>
       </View>
-      <HistoryItemControls
+      {/*<HistoryItemControls
         onDelete={() => setDialogOpen(true)}
         onExport={onExport}
         onShowMap={onShowMap}
         onShowStats={onShowStats}
+      />*/}
+      <Button
+        width={40}
+        height={40}
+        variant="ghost"
+        icon={<MaterialIcons name="more-vert" size={32} color="white" />}
+        onPress={() => null}
       />
       <Dialog
         open={dialogOpen}

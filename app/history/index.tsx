@@ -9,6 +9,8 @@ import HistoryList from "../../components/History/HistoryList";
 import DateFilter from "../../components/History/DateFilter";
 import HistoryHeader from "../../components/History/HistoryHeader";
 import { useRouter } from "expo-router";
+import { View } from "react-native";
+import BackButton from "../../components/BackButton";
 
 interface Filter {
   start: Date | undefined;
@@ -115,8 +117,10 @@ export default function History() {
 
   return (
     <PageContainer>
+      <View className="absolute top-2 left-2">
+        <BackButton />
+      </View>
       <HistoryHeader
-        nRuns={filteredRuns.length}
         filterOpen={filterOpen}
         filterActive={filterActive}
         onFilterOpen={handleFilterOpen}

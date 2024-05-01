@@ -51,7 +51,7 @@ export default function DateFilter({
 
   return (
     <View
-      className="justify-between items-center bg-slate-700 mb-8 py-3 rounded border-2 border-sky-100"
+      className="justify-between items-center bg-slate-700 mb-6 py-3 rounded border-2 border-sky-100"
       style={{ gap: 12 }}
     >
       <FilterItem label="Von" value={start} onPress={handleShowStart} />

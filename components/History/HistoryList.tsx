@@ -1,4 +1,4 @@
-import { FlatList } from "react-native";
+import { FlatList, Text } from "react-native";
 import HistoryItem from "./HistoryItem";
 import { HistoryRunPartial } from "../../types/types";
 
@@ -18,19 +18,25 @@ export default function HistoryList({
   onShowStats,
 }: Props) {
   return (
-    <FlatList
-      data={filteredRuns}
-      renderItem={({ item: r }) => (
-        <HistoryItem
-          key={r.id}
-          run={r}
-          onDelete={() => onDeleteItem(r.id)}
-          onExport={() => onExportItem(r.id)}
-          onShowMap={() => onShowMap(r.id)}
-          onShowStats={() => onShowStats(r.id)}
-        />
-      )}
-      keyExtractor={(item) => item.id.toString()}
-    />
+    <>
+      <Text className="text-sky-300 text-lg mb-4">
+        {filteredRuns.length}{" "}
+        {filteredRuns.length === 1 ? "Eintrag" : "Einträge"}
+      </Text>
+      <FlatList
+        data={filteredRuns}
+        renderItem={({ item: r }) => (
+          <HistoryItem
+            key={r.id}
+            run={r}
+            onDelete={() => onDeleteItem(r.id)}
+            onExport={() => onExportItem(r.id)}
+            onShowMap={() => onShowMap(r.id)}
+            onShowStats={() => onShowStats(r.id)}
+          />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+      />
+    </>
   );
 }

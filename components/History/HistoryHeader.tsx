@@ -1,9 +1,8 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Button from "../Button";
 
 interface Props {
-  nRuns: number;
   filterOpen: boolean;
   filterActive: boolean;
   onFilterOpen: () => void;
@@ -12,7 +11,6 @@ interface Props {
 }
 
 export default function HistoryHeader({
-  nRuns,
   filterOpen,
   filterActive,
   onFilterOpen,
@@ -20,10 +18,7 @@ export default function HistoryHeader({
   onFilderReset,
 }: Props) {
   return (
-    <View className="mb-8 flex flex-row justify-between items-center">
-      <Text className="text-sky-300 text-lg">
-        {nRuns} {nRuns === 1 ? "Eintrag" : "Einträge"}
-      </Text>
+    <View className="mb-6 flex flex-row justify-end items-center">
       <View className="flex-row" style={{ gap: 8 }}>
         {filterOpen && filterActive && (
           <Button
