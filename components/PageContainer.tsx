@@ -7,7 +7,7 @@ export default function PageContainer({
 }: PropsWithChildren<unknown>) {
   return (
     <View
-      className="flex-1 justify-center align-center bg-slate-800 p-4"
+      className="flex-1 justify-center align-center bg-slate-800"
       style={{ marginTop: StatusBar.currentHeight }}
     >
       <StatusBar

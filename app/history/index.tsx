@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { HistoryRunPartial } from "../../types/types";
 import PageContainer from "../../components/PageContainer";
-import { isDateGreaterOrEqual, isDateSmallerOrEqual } from "../../utils/utils";
+import {
+  formatTime,
+  getTimeFromSeconds,
+  isDateGreaterOrEqual,
+  isDateSmallerOrEqual,
+} from "../../utils/utils";
 import FullPageInfo from "../../components/FullPageInfo";
 import { historyDb } from "../../database";
 import { logError } from "../../logger/logger";
@@ -9,6 +14,9 @@ import HistoryList from "../../components/History/HistoryList";
 import DateFilter from "../../components/History/DateFilter";
 import HistoryHeader from "../../components/History/HistoryHeader";
 import { useRouter } from "expo-router";
+import { View, Text } from "react-native";
+import Table from "../../components/History/Table/Table";
+import dayjs from "dayjs";
 
 interface Filter {
   start: Date | undefined;
@@ -33,6 +41,18 @@ export default function History() {
           isDateSmallerOrEqual(new Date(r.end), dateFilter.end),
       ),
     [dateFilter, runs],
+  );
+
+  const tableRows = useMemo(
+    () =>
+      filteredRuns.map((run) => ({
+        id: run.id,
+        date: dayjs(run.start).format("DD.MM.YYYY"),
+        time: `${dayjs(run.start).format("HH:mm")} - ${dayjs(run.end).format("HH:mm")}`,
+        distance: (run.distance / 1000).toFixed(2),
+        duration: formatTime(getTimeFromSeconds(run.time)),
+      })),
+    [filteredRuns],
   );
 
   useEffect(() => {
@@ -115,7 +135,7 @@ export default function History() {
 
   return (
     <PageContainer>
-      <HistoryHeader
+      {/*<HistoryHeader
         nRuns={filteredRuns.length}
         filterOpen={filterOpen}
         filterActive={filterActive}
@@ -129,13 +149,21 @@ export default function History() {
           onStartChange={handleStartChange}
           onEndChange={handleEndChange}
         />
-      )}
-      <HistoryList
+      )}<HistoryList
         filteredRuns={filteredRuns}
         onDeleteItem={handleDeleteItem}
         onExportItem={handleExportItem}
         onShowMap={handleShowMap}
         onShowStats={handleShowStats}
+      />*/}
+      <Table
+        rows={tableRows}
+        columns={{
+          date: "Datum",
+          time: "Zeit",
+          distance: "Distanz",
+          duration: "Dauer",
+        }}
       />
     </PageContainer>
   );

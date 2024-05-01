@@ -49,7 +49,7 @@ export default function Home() {
         <Button
           icon={<MaterialIcons name="history" size={32} color="white" />}
           onPress={() => router.push("/history")}
-          text="Läufe"
+          text="Verlauf"
         />
       </View>
     </View>
